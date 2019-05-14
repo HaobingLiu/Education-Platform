@@ -1,4 +1,6 @@
 # Create your views here.
+# Authors: Liu Haobing, Li Juan, Zhu Jing, Li Zexuan
+# Organization: Shanghai Jiao Tong University
 from __future__ import division
 from __future__ import unicode_literals
 
