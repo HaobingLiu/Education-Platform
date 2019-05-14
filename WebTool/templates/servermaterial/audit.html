@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Dashboard">
+    <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+
+    <title>学生成长分析平台</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/templates/servermaterial/assets/css/bootstrap.css" rel="stylesheet">
+    <!--external css-->
+    <link href="/templates/servermaterial/assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/templates/servermaterial/assets/css/zabuto_calendar.css">
+    <link rel="stylesheet" type="text/css" href="/templates/servermaterial/assets/js/gritter/css/jquery.gritter.css" />
+    <link rel="stylesheet" type="text/css" href="/templates/servermaterial/assets/lineicons/style.css">
+
+    <!-- Custom styles for this template -->
+    <link href="/templates/servermaterial/assets/css/style.css" rel="stylesheet">
+    <link href="/templates/servermaterial/assets/css/style-responsive.css" rel="stylesheet">
+
+    <script src="/templates/servermaterial/assets/js/chart-master/Chart.js"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="/templates/servermaterial/https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="/templates/servermaterial/https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+  <!-- **********************************************************************************************************************************************************
+  MAIN SIDEBAR MENU
+  *********************************************************************************************************************************************************** -->
+  <!--sidebar start-->
+  <aside>
+      <div id="sidebar"  class="nav-collapse ">
+          <!-- sidebar menu start-->
+          <ul class="sidebar-menu" id="nav-accordion">
+              <p class="centered"><a href="/templates/servermaterial/profile.html"><img src="/templates/servermaterial/assets/img/ui-sam.jpg" class="img-circle" width="60"></a></p>
+              <h5 class="centered">您好，管理员！</h5>
+
+              <li class="mt">
+                  <a class="active" href="/templates/servermaterial/index.html">
+                      <i class="fa fa-dashboard"></i>
+                      <span>公告栏</span>
+                  </a>
+              </li>
+              <li class="sub-menu">
+                  <a href="/templates/servermaterial/javascript:;" >
+                      <i class="fa fa-desktop"></i>
+                      <span>注册审核</span>
+                  </a>
+                  <ul class="sub">
+                      <li><a  href="/templates/servermaterial/audit.html">注册审核</a></li>
+                      <li><a  href="/templates/servermaterial/modify.html">信息修改</a></li>
+                  </ul>
+              </li>
+              <li class="sub-menu">
+                  <a href="/templates/servermaterial/javascript:;" >
+                      <i class="fa fa-cogs"></i>
+                      <span>系统管理</span>
+                  </a>
+                  <ul class="sub">
+                      <li><a  href="/templates/servermaterial/calendar.html">教师管理</a></li>
+                      <li><a  href="/templates/servermaterial/gallery.html">专家管理</a></li>
+                  </ul>
+              </li>
+              <li class="sub-menu">
+                  <a href="/templates/servermaterial/javascript:;" >
+                      <i class="fa fa-book"></i>
+                      <span>指标体系</span>
+                  </a>
+                  <ul class="sub">
+                      <li><a  href="/templates/servermaterial/basic_table.html">体系简介</a></li>
+                      <li><a  href="/templates/servermaterial/login.html">指标自定义</a></li>
+                      <li><a  href="/templates/servermaterial/lock_screen.html">指标计算</a></li>
+                  </ul>
+              </li>
+          </ul>
+          <!-- sidebar menu end-->
+      </div>
+  </aside>
+  <!--sidebar end-->
+
+  <!-- **********************************************************************************************************************************************************
+  MAIN CONTENT
+  *********************************************************************************************************************************************************** -->
+  <!--main content start-->
+  <section id="main-content">
+    <section class="wrapper">
+      <h3><i class="fa fa-angle-right"></i>权限说明</h3>
+      <div class="row mt">
+        <div class="col-lg-12 mt">
+          <div class="row content-panel">
+            <div class="panel-heading">
+              <ul class="nav nav-tabs nav-justified">
+                <li class="active">
+                  <a data-toggle="tab" href="#teacher">教师权限说明</a>
+                </li>
+                <li>
+                  <a data-toggle="tab" href="#expert">专家权限说明</a>
+                </li>
+              </ul>
+            </div>
+            <div class="panel-body">
+              <div class="tab-content">
+                <div id="teacher" class="tab-pane active">
+                  <div class="row">
+                    <div class="col-lg-6 detailed">
+                      <h4>教师权限说明</h4>
+                      <table class="table table-bordered table-striped table-condensed">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>权限</th>
+                            <th>部门</th>
+                            <th>职务</th>
+                            <th>说明</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>1</td>
+                            <td>VIP</td>
+                            <td>校级部门</td>
+                            <td>校领导</td>
+                            <td>查看全部学院、专业、年级学生的成长发展情况</td>
+                          </tr>
+                          <tr>
+                            <td>2</td>
+                            <td>高级</td>
+                            <td>院级部门</td>
+                            <td>院领导</td>
+                            <td>查看本学院全部专业、年级学生的成长发展情况</td>
+                          </tr>
+                          <tr>
+                            <td>3</td>
+                            <td>普通</td>
+                            <td>系级部门</td>
+                            <td>思政老师</td>
+                            <td>查看其负责专业、年级学生的成长发展情况</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /col-lg-8 -->
+                  </div>
+                  <!-- /row -->
+                </div>
+                <div id="expert" class="tab-pane">
+                  <div class="row">
+                    <div class="col-lg-6 detailed">
+                      <h4>专家权限说明</h4>
+                      <table class="table table-bordered table-striped table-condensed">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>权限</th>
+                            <th>职务</th>
+                            <th>说明</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>1</td>
+                            <td>高级</td>
+                            <td>普通专家</td>
+                            <td>……</td>
+                          </tr>
+                          <tr>
+                            <td>2</td>
+                            <td>普通</td>
+                            <td>特邀专家</td>
+                            <td>……</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /col-lg-8 -->
+                  </div>
+                  <!-- /row -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="wrapper">
+      <h3><i class="fa fa-angle-right"></i>注册审核</h3>
+      <div class="row mt">
+        <div class="col-sm-12 detailed">
+          <section class="panel">
+            <header class="panel-heading wht-bg">
+                <h4 class="gen-case">
+                  注册申请
+                  <form action="#" class="pull-right mail-src-position">
+                    <div class="input-append">
+                      <input type="text" class="form-control " placeholder="注册用户搜索">
+                    </div>
+                  </form>
+                </h4>
+              </header>
+            <div class="panel-body minimal">
+                <div class="mail-option">
+                  <div class="btn-group">
+                    <button class="btn btn-theme">全部选择</button>
+                  </div>
+                  <div class="btn-group">
+                    <button class="btn btn-theme">接受选中项</button>
+                  </div>
+                  <ul class="unstyled inbox-pagination">
+                    <li><span>1-50 of 99</span></li>
+                    <li>
+                      <a class="np-btn" href="#"><i class="fa fa-angle-left  pagination-left"></i></a>
+                    </li>
+                    <li>
+                      <a class="np-btn" href="#"><i class="fa fa-angle-right pagination-right"></i></a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="table-inbox-wrap ">
+                  <table class="table table-inbox table-hover">
+                    <thead>
+                      <tr class="">
+                        <td class="text-left">选择</td>
+                        <td class="text-left">用户名</td>
+                        <td class="text-left">姓名</td>
+                        <td class="text-left">部门</td>
+                        <td class="text-left">职务</td>
+                        <td class="text-left">权限</td>
+                        <td class="text-left">操作</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                      <tr class="unread">
+                        <td class="inbox-small-cells">
+                          <input type="checkbox" class="mail-checkbox">
+                        </td>
+                        <td class="text-left">zhang3</td>
+                        <td class="text-left">张三</td>
+                        <td class="text-left">数学科学学院</td>
+                        <td class="text-left">思政老师</td>
+                        <td class="text-left">普通用户</td>
+                        <td class="">
+                          <button class="btn btn-success btn-xs"><i class=" fa fa-check"></i></button>
+                          <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <script src="lib/jquery/jquery.min.js"></script>
+  <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+  <script class="include" type="text/javascript" src="lib/jquery.dcjqaccordion.2.7.js"></script>
+  <script src="lib/jquery.scrollTo.min.js"></script>
+  <script src="lib/jquery.nicescroll.js" type="text/javascript"></script>
+  <!--common script for all pages-->
+  <script src="lib/common-scripts.js"></script>
+  <!--script for this page-->
+  <!-- MAP SCRIPT - ALL CONFIGURATION IS PLACED HERE - VIEW OUR DOCUMENTATION FOR FURTHER INFORMATION -->
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASm3CwaK9qtcZEWYa-iQwHaGi3gcosAJc&sensor=false"></script>
+  <script type="text/javascript" src="lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+
+  <!-- js placed at the end of the document so the pages load faster -->
+  <script src="lib/jquery/jquery.min.js"></script>
+  <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+  <script class="include" type="text/javascript" src="lib/jquery.dcjqaccordion.2.7.js"></script>
+  <script src="lib/jquery.scrollTo.min.js"></script>
+  <script src="lib/jquery.nicescroll.js" type="text/javascript"></script>
+  <!--common script for all pages-->
+  <script src="lib/common-scripts.js"></script>
+  <!--script for this page-->
+  <script src="lib/jquery-ui-1.9.2.custom.min.js"></script>
+  <script type="text/javascript" src="lib/bootstrap-fileupload/bootstrap-fileupload.js"></script>
+  <script type="text/javascript" src="lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+  <script type="text/javascript" src="lib/bootstrap-daterangepicker/date.js"></script>
+  <script type="text/javascript" src="lib/bootstrap-daterangepicker/daterangepicker.js"></script>
+  <script type="text/javascript" src="lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+  <script type="text/javascript" src="lib/bootstrap-daterangepicker/moment.min.js"></script>
+  <script type="text/javascript" src="lib/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
+  <script src="lib/advanced-form-components.js"></script>
+
+  </body>
+</html>

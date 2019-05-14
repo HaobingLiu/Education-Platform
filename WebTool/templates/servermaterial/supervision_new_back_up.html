@@ -1,0 +1,4577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Dashboard">
+    <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <title>学生成长分析平台</title>
+
+    <!-- Favicons -->
+    <link href="/templates/servermaterial/img/favicon.png" rel="icon">
+    <link href="/templates/servermaterial/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Bootstrap core CSS -->
+    <link href="/templates/servermaterial/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!--external css-->
+    <link href="/templates/servermaterial/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link href="/templates/servermaterial/lib/advanced-datatable/css/demo_page.css" rel="stylesheet" />
+    <link href="/templates/servermaterial/lib/advanced-datatable/css/demo_table.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/templates/servermaterial/lib/advanced-datatable/css/DT_bootstrap.css" />
+    <link rel="stylesheet" href="http://cdn.oesmith.co.uk/morris-0.4.3.min.css">
+    <!-- Custom styles for this template -->
+    <link href="/templates/servermaterial/css/style.css" rel="stylesheet">
+    <link href="/templates/servermaterial/css/style-responsive.css" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            /*
+             学院下拉框改变
+             */
+            $("#school").change(function () {
+                $.ajax({
+                    url: '/web/query_majors',
+                    type: 'POST',
+                    data: JSON.stringify({'school': $("#school").find("option:selected").text()}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $("#major").empty();
+                        for (var i = 0; i < result.length; i++) {
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#major").append(newNode);
+                        }
+                        changeMajor();
+                    }
+
+                });
+            });
+
+
+            /*
+             专业下拉框改变
+             */
+            $("#major").change(changeMajor);
+
+            function changeMajor() {
+                var major = $("#major").find('option:selected').text();
+                var school = $("#school").find('option:selected').text();
+                $.ajax({
+                    url: '/web/query_grades',
+                    type: 'POST',
+                    data: JSON.stringify({"school": school, "major": major}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $("#grade_").empty();
+                        for (var i = 0; i < result.length; i++) {
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#grade_").append(newNode);
+                        }
+                        changeGrade();
+                    }
+                })
+            }
+
+
+            /*
+             年级下拉框改变
+             */
+            $("#grade_").change(changeGrade);
+
+            function changeGrade() {
+                var grade = $("#grade_").find('option:selected').text();
+                var major = $("#major").find('option:selected').text();
+                var school = $("#school").find('option:selected').text();
+                $.ajax({
+                    url: '/web/query_class',
+                    type: 'POST',
+                    data: JSON.stringify({"school": school, "major": major, "grade": grade}),
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        $("#class").empty();
+                        for (var i = 0; i < result.length; i++) {
+                            var newNode = $("<option>" + result[i] + "</option>");
+                            $("#class").append(newNode);
+                        }
+    <!--                        changeClass();-->
+                    }
+                })
+            }
+
+
+    <!--            /*-->
+    <!--             班级下拉框改变-->
+    <!--             */-->
+    <!--            $("#class").change(changeClass);-->
+
+    <!--            function changeClass() {-->
+    <!--                var clas = $("#class").find('option:selected').text();-->
+    <!--                var grade = $("#grade_").find('option:selected').text();-->
+    <!--                var major = $("#major").find('option:selected').text();-->
+    <!--                var school = $("#school").find('option:selected').text();-->
+    <!--                $.ajax({-->
+    <!--                    url: '/web/query_ID',-->
+    <!--                    type: 'POST',-->
+    <!--                    data: JSON.stringify({"school": school, "major": major, "grade": grade, "class":clas}),-->
+    <!--                    dataType: 'JSON',-->
+    <!--                    contentType: 'application/json;charset=utf-8',-->
+    <!--                    success: function (result) {-->
+    <!--                        $("#stuid").empty();-->
+    <!--                        for (var i = 0; i < result.length; i++) {-->
+    <!--                            var newNode = $("<option>" + result[i] + "</option>");-->
+    <!--                            $("#stuid").append(newNode);-->
+    <!--                        }-->
+    <!--                    }-->
+    <!--                })-->
+    <!--            }-->
+
+
+
+        });
+    </script>
+
+    <!-- =======================================================
+        Template Name: Dashio
+        Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
+        Author: TemplateMag.com
+        License: https://templatemag.com/license/
+    ======================================================= -->
+
+  </head>
+  <body>
+    <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS
+      *********************************************************************************************************************************************************** -->
+    <!--header start-->
+    {% include 'servermaterial/header.html' %}
+    <!--header end-->
+
+    <!--sidebar start-->
+    {% include 'servermaterial/sidebar.html' %}
+    <!--sidebar end-->
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+      <section class="wrapper site-min-height">
+        <div class="col-lg-12 mt">
+          <div class="row content-panel">
+            <div class="col-lg-12 detailed mt">
+              <h4>可视化选项</h4>
+              <div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">学院</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="school">
+                            {% for school in school_list %}
+                                <option>{{ school }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">专业</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="major">
+                            {% for major in major_list %}
+                                <option> {{ major }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">年级</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="grade_">
+                            {% for grade in grade_list %}
+                                <option> {{ grade }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="cls form-group col-lg-4">
+                    <label class="col-lg-3 control-label">班级</label>
+                    <div class="col-lg-8">
+                        <select class="form-control" id="class">
+                            {% for class in class_list %}
+                                <option> {{ class }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+              <div class="form-group col-lg-6">
+                  <button class="btn btn-theme" id="inquirybtn" type="button" onclick="charts()">查询</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12 detailed">
+          <div class="row content-panel">
+            <h4>成长记录</h4>
+            <div class="panel-heading">
+              <ul class="nav nav-tabs nav-justified">
+                <li class="active">
+                  <a data-toggle="tab" href="#geo_dis">地域分布</a>
+                </li>
+                <li>
+                  <a data-toggle="tab" href="#grades">成绩分析</a>
+                </li>
+                <li>
+                  <a data-toggle="tab" href="#health">身体健康</a>
+                </li>
+                <li>
+                  <a data-toggle="tab" href="#life">校园生活</a>
+                </li>
+                <li>
+                  <a data-toggle="tab" href="#library">图书馆访问</a>
+                </li>
+              </ul>
+            </div>
+            <!-- /panel-heading -->
+            <div class="panel-body">
+              <div class="tab-content">
+                <!-- /地域分布 -->
+                <div id="geo_dis" class="tab-pane active">
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-geo-1" style="width:200%;height:550px;"></div>
+                      <div id="chart-geo-2" style="width:200%;height:550px;"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- /成绩分析 -->
+                <div id="grades" class="tab-pane">
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-grade-1" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-grade-2" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-grade-3" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-grade-4" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-grade-5" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-grade-6" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- /校园生活 -->
+                <div id="life" class="tab-pane">
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-life-1" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-life-2" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-life-3" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-life-4" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- /身体健康 -->
+                <div id="health" class="tab-pane">
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-health-1" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-health-2" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-health-3" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-health-4" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-health-5" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-health-6" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-health-7" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <!-- /图书馆访问 -->
+                <div id="library" class="tab-pane">
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-library-1" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-library-2" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-library-3" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-library-4" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <!-- /tab-content -->
+            </div>
+            <!-- /panel-body -->
+          </div>
+          <!-- /row content-panel -->
+        </div>
+        <!-- /col-lg-12 -->
+      </section>
+      <!-- /wrapper -->
+    </section>
+    <!-- /MAIN CONTENT -->
+    <!--main content end-->
+
+    <!--footer start-->
+    {% include 'servermaterial/footer.html' %}
+    <!--footer end-->
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <!--<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>-->
+     <!-- <script src="/templates/servermaterial/lib/jquery/jquery.min.js"></script>-->
+    <script src="/templates/servermaterial/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script class="include" type="text/javascript" src="/templates/servermaterial/lib/jquery.dcjqaccordion.2.7.js"></script>
+    <script src="/templates/servermaterial/lib/jquery.scrollTo.min.js"></script>
+    <script src="/templates/servermaterial/lib/jquery.nicescroll.js" type="text/javascript"></script>
+    <!--common script for all pages-->
+    <script src="/templates/servermaterial/lib/common-scripts.js"></script>
+    <!--script for this page-->
+    <script src="/templates/servermaterial/lib/jquery-ui-1.9.2.custom.min.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-fileupload/bootstrap-fileupload.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/date.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/moment.min.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
+    <script src="/templates/servermaterial/lib/advanced-form-components.js"></script>
+    <!--script for this page-->
+    <script src="/templates/servermaterial/lib/morris-conf.js"></script>
+    <script src="/templates/servermaterial/lib/morris/morris.min.js"></script>
+    <script src="/templates/servermaterial/lib/raphael/raphael.min.js"></script>
+    <!--script for charts-->
+    <script src="/templates/servermaterial/lib/echarts.min.js"></script>
+
+    <script type="text/javascript" language="javascript" src="/templates/servermaterial/lib/advanced-datatable/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/advanced-datatable/js/DT_bootstrap.js"></script>
+
+
+
+    <!--地域分布-->
+    <!--script>
+        var myChart = echarts.init(document.getElementById('chart-geo-1'));
+        myChart.showLoading();
+
+        $.get('/templates/servermaterial/HK.json', function (geoJson) {
+            alert(geoJson['features'])
+            alert('1')
+            myChart.hideLoading();
+            alert('2')
+
+            echarts.registerMap('HK', geoJson);
+            alert('3')
+
+            option = {
+                title: {
+                    text: '香港18区人口密度 （2011）',
+                    subtext: '人口密度数据来自Wikipedia',
+                    sublink: 'http://zh.wikipedia.org/wiki/%E9%A6%99%E6%B8%AF%E8%A1%8C%E6%94%BF%E5%8D%80%E5%8A%83#cite_note-12'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}<br/>{c} (p / km2)'
+                },
+                toolbox: {
+                    show: true,
+                    orient: 'vertical',
+                    left: 'right',
+                    top: 'center',
+                    feature: {
+                        dataView: {readOnly: false},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                visualMap: {
+                    min: 800,
+                    max: 50000,
+                    text:['High','Low'],
+                    realtime: false,
+                    calculable: true,
+                    inRange: {
+                        color: ['lightskyblue','yellow', 'orangered']
+                    }
+                },
+                series: [
+                    {
+                        name: '香港18区人口密度',
+                        type: 'map',
+                        mapType: HK, // 自定义扩展图表类型
+                        itemStyle:{
+                            normal:{label:{show:true}},
+                            emphasis:{label:{show:true}}
+                        },
+                        data:[
+                            {name: '中西区', value: 20057.34},
+                            {name: '湾仔', value: 15477.48},
+                            {name: '东区', value: 31686.1},
+                            {name: '南区', value: 6992.6},
+                            {name: '油尖旺', value: 44045.49},
+                            {name: '深水埗', value: 40689.64},
+                            {name: '九龙城', value: 37659.78},
+                            {name: '黄大仙', value: 45180.97},
+                            {name: '观塘', value: 55204.26},
+                            {name: '葵青', value: 21900.9},
+                            {name: '荃湾', value: 4918.26},
+                            {name: '屯门', value: 5881.84},
+                            {name: '元朗', value: 4178.01},
+                            {name: '北区', value: 2227.92},
+                            {name: '大埔', value: 2180.98},
+                            {name: '沙田', value: 9172.94},
+                            {name: '西贡', value: 3368},
+                            {name: '离岛', value: 806.98}
+                        ],
+                        // 自定义名称映射
+                        nameMap: {
+                            'Central and Western': '中西区',
+                            'Eastern': '东区',
+                            'Islands': '离岛',
+                            'Kowloon City': '九龙城',
+                            'Kwai Tsing': '葵青',
+                            'Kwun Tong': '观塘',
+                            'North': '北区',
+                            'Sai Kung': '西贡',
+                            'Sha Tin': '沙田',
+                            'Sham Shui Po': '深水埗',
+                            'Southern': '南区',
+                            'Tai Po': '大埔',
+                            'Tsuen Wan': '荃湾',
+                            'Tuen Mun': '屯门',
+                            'Wan Chai': '湾仔',
+                            'Wong Tai Sin': '黄大仙',
+                            'Yau Tsim Mong': '油尖旺',
+                            'Yuen Long': '元朗'
+                        }
+                    }
+                ]
+            }
+            myChart.setOption(option);
+            alert('4')
+        });
+        alert('5')
+    </script>-->
+    <script type="text/javascript" src="/templates/servermaterial/china.js"></script>
+
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('chart-geo-1'));
+
+		option = {
+            title: {
+                text: '学生地域分布',
+            },
+			tooltip: {
+                trigger: 'item',
+                formatter: '{b}<br/>{c} (人)'
+            },
+            toolbox: {
+                    show: true,
+                    orient: 'vertical',
+                    left: 'right',
+                    top: 'center',
+                    feature: {
+                        dataView: {readOnly: false},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+            visualMap: {
+                    min: 800,
+                    max: 50000,
+                    text:['多','少'],
+                    realtime: false,
+                    calculable: true,
+                    inRange: {
+                        color: ['lightskyblue','yellow', 'orangered']
+                    }
+                },
+			series: [
+				{
+					name: '中国',
+					type: 'map',
+					mapType: 'china',
+					itemStyle:{
+                            normal:{label:{show:true}},
+                            emphasis:{label:{show:true}}
+                        },
+					data:[
+						{name:'四川', value: 23456},
+                        {name:'江西', value: 20057.34},
+                        {name:'江苏', value: 20057.34},
+                        {name:'山东', value: 20057.34},
+                        {name:'安徽', value: 20057.34},
+                        {name:'上海', value: 20057.34},
+                        {name:'重庆', value: 20057.34},
+                        {name:'福建', value: 20057.34},
+                        {name:'河南', value: 20057.34},
+                        {name:'河北', value: 20057.34},
+                        {name:'广东', value: 20057.34},
+                        {name:'广西', value: 20057.34},
+                        {name:'山西', value: 20057.34},
+                        {name:'天津', value: 20057.34},
+                        {name:'湖北', value: 20057.34},
+                        {name:'浙江', value: 20057.34},
+                        {name:'陕西', value: 20057.34},
+                        {name:'内蒙古', value: 20057.34},
+                        {name:'海南', value: 20057.34},
+                        {name:'辽宁', value: 20057.34},
+                        {name:'吉林', value: 20057.34},
+                        {name:'黑龙江', value: 20057.34},
+                        {name:'湖南', value: 20057.34},
+                        {name:'贵州', value: 20057.34},
+                        {name:'云南', value: 20057.34},
+                        {name:'甘肃', value: 20057.34},
+                        {name:'青海', value: 20057.34},
+                        {name:'台湾', value: 20057.34},
+                        {name:'北京', value: 20057.34},
+                        {name:'西藏', value: 20057.34},
+                        {name:'宁夏', value: 20057.34},
+                        {name:'新疆', value: 20057.34},
+                        {name:'香港', value: 20057.34},
+                        {name:'澳门', value: 20057.34}
+					]
+				}
+			]
+		};
+
+ // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('chart-geo-2'));
+
+		option = {
+            title: {
+                text: '各地域学生的平均成绩'
+            },
+			tooltip: {
+                trigger: 'item',
+                formatter: '{b}<br/>{c} (人)'
+            },
+            toolbox: {
+                    show: true,
+                    orient: 'vertical',
+                    left: 'right',
+                    top: 'center',
+                    feature: {
+                        dataView: {readOnly: false},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+            visualMap: {
+                    min: 800,
+                    max: 50000,
+                    text:['多','少'],
+                    realtime: false,
+                    calculable: true,
+                    inRange: {
+                        color: ['lightskyblue','yellow', 'orangered']
+                    }
+                },
+			series: [
+				{
+					name: '中国',
+					type: 'map',
+					mapType: 'china',
+					itemStyle:{
+                            normal:{label:{show:true}},
+                            emphasis:{label:{show:true}}
+                        },
+					data:[
+						{name:'四川', value: 23456},
+                        {name:'江西', value: 20057.34},
+                        {name:'江苏', value: 20057.34},
+                        {name:'山东', value: 20057.34},
+                        {name:'安徽', value: 20057.34},
+                        {name:'上海', value: 20057.34},
+                        {name:'重庆', value: 20057.34},
+                        {name:'福建', value: 20057.34},
+                        {name:'河南', value: 20057.34},
+                        {name:'河北', value: 20057.34},
+                        {name:'广东', value: 20057.34},
+                        {name:'广西', value: 20057.34},
+                        {name:'山西', value: 20057.34},
+                        {name:'天津', value: 20057.34},
+                        {name:'湖北', value: 20057.34},
+                        {name:'浙江', value: 20057.34},
+                        {name:'陕西', value: 20057.34},
+                        {name:'内蒙古', value: 20057.34},
+                        {name:'海南', value: 20057.34},
+                        {name:'辽宁', value: 20057.34},
+                        {name:'吉林', value: 20057.34},
+                        {name:'黑龙江', value: 20057.34},
+                        {name:'湖南', value: 20057.34},
+                        {name:'贵州', value: 20057.34},
+                        {name:'云南', value: 20057.34},
+                        {name:'甘肃', value: 20057.34},
+                        {name:'青海', value: 20057.34},
+                        {name:'台湾', value: 20057.34},
+                        {name:'北京', value: 20057.34},
+                        {name:'西藏', value: 20057.34},
+                        {name:'宁夏', value: 20057.34},
+                        {name:'新疆', value: 20057.34},
+                        {name:'香港', value: 20057.34},
+                        {name:'澳门', value: 20057.34}
+					]
+				}
+			]
+		};
+
+ // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+
+
+    <!--成绩分析-->
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-grade-1'));
+
+      option = {
+          title : {
+              text: '学生成绩分布',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-60','60-70','70-80','80-90','90-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:335, name:'0-60'},
+                      {value:310, name:'60-70'},
+                      {value:234, name:'70-80'},
+                      {value:135, name:'80-90'},
+                      {value:1548, name:'90-100'}
+                  ]
+              }
+          ]
+      };
+
+
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-grade-2'));
+      var option = {
+          title : {
+              text: '成绩与性别',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均成绩', '平均成绩', '性别'],
+                  [89.3, 89.3, '总体'],
+                  [57.1, 57.1, '男'],
+                  [74.4, 74.4, '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '平均成绩'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 100,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '平均\n成绩'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-grade-3'));
+      option = {
+          title : {
+                  text: '成绩与图书馆访问',
+                  subtext: '横坐标为一学期图书馆访问总次数',
+                  x:'center'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          legend: {
+              data:['平均成绩','最高成绩','最低成绩'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: '成绩',
+                  min: 0,
+                  max: 100,
+                  interval: 10,
+              }
+          ],
+          series: [
+              {
+                  name:'平均成绩',
+                  type:'bar',
+                  data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 95.6, 92.2, 32.6],
+                  itemStyle:{
+                     normal:{
+                       color:'#4f9D9D',
+                       }
+                }
+              },
+              {
+                  name:'最高成绩',
+                  type:'line',
+                  data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 95.6, 97.2, 48.7],
+                  itemStyle:{
+                     normal:{
+                       color:'#EA7500',
+                       }
+                }
+              },
+              {
+                  name:'最低成绩',
+                  type:'line',
+                  data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0]
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+     <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-grade-4'));
+      option = {
+          title : {
+                  text: '成绩与回寝时间',
+                  subtext: '横坐标为一学期平均回寝时间',
+                  x:'center'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          legend: {
+              data:['平均成绩','最高成绩','最低成绩'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['0','6','12','15','18','21','22','23'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: '成绩',
+                  min: 0,
+                  max: 100,
+                  interval: 10,
+              }
+          ],
+          series: [
+              {
+                  name:'平均成绩',
+                  type:'bar',
+                  data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 95.6, 92.2],
+                  itemStyle:{
+                     normal:{
+                       color:'#4f9D9D',
+                       }
+                }
+              },
+              {
+                  name:'最高成绩',
+                  type:'line',
+                  data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 95.6, 97.2],
+                  itemStyle:{
+                     normal:{
+                       color:'#EA7500'
+                       }
+                }
+              },
+              {
+                  name:'最低成绩',
+                  type:'line',
+                  data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4]
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-grade-5'));
+      option = {
+        title: {
+            text: '概率密度函数',
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        toolbox: {
+            show: false,
+            feature: {
+                dataZoom: {
+                    yAxisIndex: 'none'
+                },
+                dataView: {readOnly: false},
+                magicType: {type: ['line', 'bar']},
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        xAxis:  {
+            type: 'category',
+            boundaryGap: false,
+            data: ['0','20','40','60','80','100']
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: {
+                formatter: '{value}'
+            }
+        },
+        series: [
+            {
+                name:'概率密度',
+                type:'line',
+                data:[11, 11, 15, 13, 12, 13],
+                markPoint: {
+                    data: [
+                        {type: 'max', name: '最大值'},
+                        {type: 'min', name: '最小值'}
+                    ]
+                },
+                markLine: {
+                    data: [
+                        {type: 'average', name: '平均值'}
+                    ]
+                },
+                itemStyle:{
+                     normal:{
+                       color:'#003E3E',
+                       }
+                }
+            },
+        ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-grade-6'));
+      option = {
+        title: {
+            text: '累积分布函数',
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        toolbox: {
+            show: false,
+            feature: {
+                dataZoom: {
+                    yAxisIndex: 'none'
+                },
+                dataView: {readOnly: false},
+                magicType: {type: ['line', 'bar']},
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        xAxis:  {
+            type: 'category',
+            boundaryGap: false,
+            data: ['0','20','40','60','80','100']
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: {
+                formatter: '{value}'
+            }
+        },
+        series: [
+            {
+                name:'概率密度',
+                type:'line',
+                data:[11, 11, 15, 13, 12, 13],
+                markPoint: {
+                    data: [
+                        {type: 'max', name: '最大值'},
+                        {type: 'min', name: '最小值'}
+                    ]
+                },
+                markLine: {
+                    data: [
+                        {type: 'average', name: '平均值'}
+                    ]
+                },
+                itemStyle:{
+                     normal:{
+                       color:'#003E3E',
+                       }
+                }
+            },
+        ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <!--校园生活-->
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-life-1'));
+
+      option = {
+          title : {
+              text: '回寝时间分布',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0:00-6:00','6:00-12:00','12:00-18:00','18:00-22:00','22:00-24:00']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:335, name:'0:00-6:00'},
+                      {value:310, name:'6:00-12:00'},
+                      {value:234, name:'12:00-18:00'},
+                      {value:135, name:'18:00-22:00'},
+                      {value:1548, name:'22:00-24:00'}
+                  ]
+              }
+          ]
+      };
+
+
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-life-2'));
+      var option = {
+          title : {
+              text: '回寝时间与性别',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均回寝时间', '平均回寝时间', '性别'],
+                  [15.3, 15.3, '总体'],
+                  [22.1, 22.1, '男'],
+                  [20.4, 20.4, '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '平均回寝时间'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['晚', '早'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '平均\n回寝时间'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-life-3'));
+
+      option = {
+          title : {
+              text: '消费分布',
+              subtext: '研究每人的平均每月消费',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-200','200-400','400-600','600-800','800-1000']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:25, name:'0-200'},
+                      {value:320, name:'200-400'},
+                      {value:234, name:'400-600'},
+                      {value:95, name:'600-800'},
+                      {value:148, name:'800-1000'}
+                  ]
+              }
+          ]
+      };
+
+
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-life-4'));
+      var option = {
+          title : {
+              text: '消费与性别',
+              subtext: '研究每人每月平均消费',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均消费', '平均消费', '性别'],
+                  [89.3, 89.3, '总体'],
+                  [57.1, 57.1, '男'],
+                  [74.4, 74.4, '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '平均消费'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 100,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '平均\n消费'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+
+    <!--身体健康-->
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-health-1'));
+
+      option = {
+          title : {
+              text: '体质测试成绩分布',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-60','60-70','70-80','80-90','90-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'体质测试',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:335, name:'0-60'},
+                      {value:310, name:'60-70'},
+                      {value:234, name:'70-80'},
+                      {value:135, name:'80-90'},
+                      {value:1548, name:'90-100'}
+                  ]
+              }
+          ]
+      };
+
+
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-health-2'));
+      var option = {
+          title : {
+              text: '体质与性别',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['成绩', '成绩', '性别'],
+                  [15.3, 15.3, '总体'],
+                  [22.1, 22.1, '男'],
+                  [20.4, 20.4, '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '成绩'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['高', '底'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '成绩'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-health-3'));
+      option = {
+          title : {
+                  text: '体质与回寝时间',
+                  subtext: '横坐标为一学期平均回寝时间',
+                  x:'center'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          legend: {
+              data:['平均成绩','最高成绩','最低成绩'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['0','6','12','15','18','21','22','23'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: '成绩',
+                  min: 0,
+                  max: 100,
+                  interval: 10,
+              }
+          ],
+          series: [
+              {
+                  name:'平均成绩',
+                  type:'bar',
+                  data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 95.6, 92.2],
+                  itemStyle:{
+                     normal:{
+                       color:'#4f9D9D',
+                       }
+                }
+              },
+              {
+                  name:'最高成绩',
+                  type:'line',
+                  data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 95.6, 97.2],
+                  itemStyle:{
+                     normal:{
+                       color:'#EA7500',
+                       }
+                }
+              },
+              {
+                  name:'最低成绩',
+                  type:'line',
+                  data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4]
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-health-4'));
+
+      option = {
+          title : {
+              text: '去校医院次数',
+              subtext: '研究每人的一学期的总次数',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-200','200-400','400-600','600-800','800-1000']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:25, name:'0-200'},
+                      {value:320, name:'200-400'},
+                      {value:234, name:'400-600'},
+                      {value:95, name:'600-800'},
+                      {value:148, name:'800-1000'}
+                  ]
+              }
+          ]
+      };
+
+
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-health-5'));
+      var option = {
+          title : {
+              text: '去校医院次数与性别',
+              subtext: '研究平均每人一学期总次数',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['次数', '次数', '性别'],
+                  [89.3, 89.3, '总体'],
+                  [57.1, 57.1, '男'],
+                  [74.4, 74.4, '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '次数'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 100,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '次'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <!--<script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-health-6'));
+      option = {
+          title : {
+                  text: '去校医院次数与回寝时间',
+                  subtext: '横坐标为一学期平均回寝时间',
+                  x:'25%'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          legend: {
+              data:['平均次数','最高次数','最低次数'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['0','6','12','15','18','21','22','23'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: '次',
+                  min: 0,
+                  max: 100,
+                  interval: 10,
+              }
+          ],
+          series: [
+              {
+                  name:'平均次数',
+                  type:'bar',
+                  data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 95.6, 92.2],
+                  itemStyle:{
+                     normal:{
+                       color:'#4f9D9D',
+                       }
+                }
+              },
+              {
+                  name:'最高次数',
+                  type:'line',
+                  data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 95.6, 97.2],
+                  itemStyle:{
+                     normal:{
+                       color:'#EA7500',
+                       }
+                }
+              },
+              {
+                  name:'最低次数',
+                  type:'line',
+                  data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4]
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>-->
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-health-6'));
+      option = {
+          title : {
+                  text: '去校医院次数与体质',
+                  subtext: '横坐标为体质测试成绩',
+                  x:'25%'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          legend: {
+              data:['平均次数','最高次数','最低次数'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['0','6','12','15','18','21','22','23'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: '次',
+                  min: 0,
+                  max: 100,
+                  interval: 10,
+              }
+          ],
+          series: [
+              {
+                  name:'平均次数',
+                  type:'bar',
+                  data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 95.6, 92.2],
+                  itemStyle:{
+                     normal:{
+                       color:'#4f9D9D',
+                       }
+                }
+              },
+              {
+                  name:'最高次数',
+                  type:'line',
+                  data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 95.6, 97.2],
+                  itemStyle:{
+                     normal:{
+                       color:'#EA7500',
+                       }
+                }
+              },
+              {
+                  name:'最低次数',
+                  type:'line',
+                  data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4]
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+
+   <!--图书馆访问-->
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-library-1'));
+
+      option = {
+          title : {
+              text: '图书馆访问次数分布',
+              subtext: '纵坐标为一学期访问图书馆总次数',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-60','60-70','70-80','80-90','90-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:335, name:'0-60'},
+                      {value:310, name:'60-70'},
+                      {value:234, name:'70-80'},
+                      {value:135, name:'80-90'},
+                      {value:1548, name:'90-100'}
+                  ]
+              }
+          ]
+      };
+
+
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-library-2'));
+      var option = {
+          title : {
+              text: '图书馆访问与性别',
+              subtext: '横坐标为每人一学期访问图书馆总次数的均值',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均值', '平均值', '性别'],
+                  [15.3, 15.3, '总体'],
+                  [22.1, 22.1, '男'],
+                  [20.4, 20.4, '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '次'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['晚', '早'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '次'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-library-3'));
+
+      option = {
+          title : {
+              text: '借书次数分布',
+              subtext: '纵坐标为一学期借书总次数',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-60','60-70','70-80','80-90','90-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:335, name:'0-60'},
+                      {value:310, name:'60-70'},
+                      {value:234, name:'70-80'},
+                      {value:135, name:'80-90'},
+                      {value:1548, name:'90-100'}
+                  ]
+              }
+          ]
+      };
+
+
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-library-4'));
+      var option = {
+          title : {
+              text: '借书次数与性别',
+              subtext: '横坐标为每人一学期借书总次数的均值',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均值', '平均值', '性别'],
+                  [15.3, 15.3, '总体'],
+                  [22.1, 22.1, '男'],
+                  [20.4, 20.4, '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '次'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['晚', '早'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '次'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+
+  <!--动态表格-->
+    <script>
+      function charts()
+      {
+        var school = $("#school").val();
+        $.post("/web/inquiry/",{'school':school}, function(ret){
+
+        var myChart = echarts.init(document.getElementById('chart-geo-1'));
+		option = {
+            title: {
+                text: '学生地域分布',
+            },
+			tooltip: {
+                trigger: 'item',
+                formatter: '{b}<br/>{c} (人)'
+            },
+            toolbox: {
+                    show: true,
+                    orient: 'vertical',
+                    left: 'right',
+                    top: 'center',
+                    feature: {
+                        dataView: {readOnly: false},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+            visualMap: {
+                    min: 0,
+                    max: 10,
+                    text:['多','少'],
+                    realtime: false,
+                    calculable: true,
+                    inRange: {
+                        color: ['lightskyblue','yellow', 'orangered']
+                    }
+                },
+			series: [
+				{
+					name: '中国',
+					type: 'map',
+					mapType: 'china',
+					itemStyle:{
+                            normal:{label:{show:true}},
+                            emphasis:{label:{show:true}}
+                        },
+					data:[
+						{name:'四川', value: ret['province_num']['四川']},
+                        {name:'江西', value: ret['province_num']['江西']},
+                        {name:'江苏', value: ret['province_num']['江苏']},
+                        {name:'山东', value: ret['province_num']['山东']},
+                        {name:'安徽', value: ret['province_num']['安徽']},
+                        {name:'上海', value: ret['province_num']['上海']},
+                        {name:'重庆', value: ret['province_num']['重庆']},
+                        {name:'福建', value: ret['province_num']['福建']},
+                        {name:'河南', value: ret['province_num']['河南']},
+                        {name:'河北', value: ret['province_num']['河北']},
+                        {name:'广东', value: ret['province_num']['广东']},
+                        {name:'广西', value: ret['province_num']['广西']},
+                        {name:'山西', value: ret['province_num']['山西']},
+                        {name:'天津', value: ret['province_num']['天津']},
+                        {name:'湖北', value: ret['province_num']['湖北']},
+                        {name:'浙江', value: ret['province_num']['浙江']},
+                        {name:'陕西', value: ret['province_num']['陕西']},
+                        {name:'内蒙古', value: ret['province_num']['内蒙古']},
+                        {name:'海南', value: ret['province_num']['海南']},
+                        {name:'辽宁', value: ret['province_num']['辽宁']},
+                        {name:'吉林', value: ret['province_num']['吉林']},
+                        {name:'黑龙江', value: ret['province_num']['黑龙江']},
+                        {name:'湖南', value: ret['province_num']['湖南']},
+                        {name:'贵州', value: ret['province_num']['贵州']},
+                        {name:'云南', value: ret['province_num']['云南']},
+                        {name:'甘肃', value: ret['province_num']['甘肃']},
+                        {name:'青海', value: ret['province_num']['青海']},
+                        {name:'台湾', value: ret['province_num']['台湾']},
+                        {name:'北京', value: ret['province_num']['北京']},
+                        {name:'西藏', value: ret['province_num']['西藏']},
+                        {name:'宁夏', value: ret['province_num']['宁夏']},
+                        {name:'新疆', value: ret['province_num']['新疆']},
+                        {name:'香港', value: ret['province_num']['香港']},
+                        {name:'澳门', value: ret['province_num']['澳门']}
+					]
+				}
+			]
+		};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        var myChart = echarts.init(document.getElementById('chart-geo-2'));
+		option = {
+            title: {
+                text: '各地域学生的平均成绩'
+            },
+			tooltip: {
+                trigger: 'item',
+                formatter: '{b}<br/>{c} (分)'
+            },
+            toolbox: {
+                    show: true,
+                    orient: 'vertical',
+                    left: 'right',
+                    top: 'center',
+                    feature: {
+                        dataView: {readOnly: false},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+            visualMap: {
+                    min: 70,
+                    max: 100,
+                    text:['多','少'],
+                    realtime: false,
+                    calculable: true,
+                    inRange: {
+                        color: ['lightskyblue','yellow', 'orangered']
+                    }
+                },
+			series: [
+				{
+					name: '中国',
+					type: 'map',
+					mapType: 'china',
+					itemStyle:{
+                            normal:{label:{show:true}},
+                            emphasis:{label:{show:true}}
+                        },
+					data:[
+						{name:'四川', value: ret['score_province']['四川']},
+                        {name:'江西', value: ret['score_province']['江西']},
+                        {name:'江苏', value: ret['score_province']['江苏']},
+                        {name:'山东', value: ret['score_province']['山东']},
+                        {name:'安徽', value: ret['score_province']['安徽']},
+                        {name:'上海', value: ret['score_province']['上海']},
+                        {name:'重庆', value: ret['score_province']['重庆']},
+                        {name:'福建', value: ret['score_province']['福建']},
+                        {name:'河南', value: ret['score_province']['河南']},
+                        {name:'河北', value: ret['score_province']['河北']},
+                        {name:'广东', value: ret['score_province']['广东']},
+                        {name:'广西', value: ret['score_province']['广西']},
+                        {name:'山西', value: ret['score_province']['山西']},
+                        {name:'天津', value: ret['score_province']['天津']},
+                        {name:'湖北', value: ret['score_province']['湖北']},
+                        {name:'浙江', value: ret['score_province']['浙江']},
+                        {name:'陕西', value: ret['score_province']['陕西']},
+                        {name:'内蒙古', value: ret['score_province']['内蒙古']},
+                        {name:'海南', value: ret['score_province']['海南']},
+                        {name:'辽宁', value: ret['score_province']['辽宁']},
+                        {name:'吉林', value: ret['score_province']['吉林']},
+                        {name:'黑龙江', value: ret['score_province']['黑龙江']},
+                        {name:'湖南', value: ret['score_province']['湖南']},
+                        {name:'贵州', value: ret['score_province']['贵州']},
+                        {name:'云南', value: ret['score_province']['云南']},
+                        {name:'甘肃', value: ret['score_province']['甘肃']},
+                        {name:'青海', value: ret['score_province']['青海']},
+                        {name:'台湾', value: ret['score_province']['台湾']},
+                        {name:'北京', value: ret['score_province']['北京']},
+                        {name:'西藏', value: ret['score_province']['西藏']},
+                        {name:'宁夏', value: ret['score_province']['宁夏']},
+                        {name:'新疆', value: ret['score_province']['新疆']},
+                        {name:'香港', value: ret['score_province']['香港']},
+                        {name:'澳门', value: ret['score_province']['澳门']}
+					]
+				}
+			]
+		};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        //学生成绩分布
+        var myChart = echarts.init(document.getElementById('chart-grade-1'));
+        option = {
+          title : {
+              text: '学生成绩分布',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-50','50-60', '60-70','70-80','80-90','90-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['num'][0], name:'0-50'},
+                      {value:ret['num'][1], name:'50-60'},
+                      {value:ret['num'][2], name:'60-70'},
+                      {value:ret['num'][3], name:'70-80'},
+                      {value:ret['num'][4], name:'80-90'},
+                      {value:ret['num'][5], name:'90-100'}
+                  ]
+              }
+          ]
+        };
+        myChart.setOption(option);
+
+        //成绩与性别
+        var myChart = echarts.init(document.getElementById('chart-grade-2'));
+        var option = {
+          title : {
+              text: '成绩与性别',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均成绩', '平均成绩', '性别'],
+                  [ret['ave_score'], ret['ave_score'], '总体'],
+                  [ret['ave_score_male'], ret['ave_score_male'], '男'],
+                  [ret['ave_score_female'], ret['ave_score_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '平均成绩'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 100,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '平均\n成绩'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+        };
+        myChart.setOption(option);
+
+        var myChart = echarts.init(document.getElementById('chart-grade-3'));
+          option = {
+              title : {
+                      text: '成绩与图书馆访问',
+                      subtext: '横坐标为一学期图书馆访问总次数',
+                      x:'center'
+              },
+              tooltip: {
+                  trigger: 'axis',
+                  axisPointer: {
+                      type: 'cross',
+                      crossStyle: {
+                          color: '#999'
+                      }
+                  }
+              },
+              toolbox: {
+                  feature: {
+                      dataView: {show: true, readOnly: false},
+                      magicType: {show: true, type: ['line', 'bar']},
+                      restore: {show: true},
+                      saveAsImage: {show: true}
+                  }
+              },
+              legend: {
+                  data:['平均成绩','最高成绩','最低成绩'],
+                  y: 'bottom'
+              },
+              xAxis: [
+                  {
+                      type: 'category',
+                      data: ['0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90'],
+                      axisPointer: {
+                          type: 'shadow'
+                      }
+                  }
+              ],
+              yAxis: [
+                  {
+                      type: 'value',
+                      name: '成绩',
+                      min: 0,
+                      max: 100,
+                      interval: 10,
+                  }
+              ],
+              series: [
+                  {
+                      name:'平均成绩',
+                      type:'bar',
+                      data:ret['score_lib_ave'],
+                      itemStyle:{
+                         normal:{
+                           color:'#4f9D9D',
+                           }
+                    }
+                  },
+                  {
+                      name:'最高成绩',
+                      type:'line',
+                      data:ret['score_lib_max'],
+                      itemStyle:{
+                         normal:{
+                           color:'#EA7500',
+                           }
+                    }
+                  },
+                  {
+                      name:'最低成绩',
+                      type:'line',
+                      data:ret['score_lib_min']
+                  }
+              ]
+          };
+          // 使用刚指定的配置项和数据显示图表。
+          myChart.setOption(option);
+
+        //成绩与回寝时间
+        var myChart = echarts.init(document.getElementById('chart-grade-4'));
+        option = {
+          title : {
+                  text: '成绩与回寝时间',
+                  subtext: '横坐标为一学期平均回寝时间',
+                  x:'center'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          legend: {
+              data:['平均成绩','最高成绩','最低成绩'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['0','6','12','15','18','21','22','23'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: '成绩',
+                  min: 0,
+                  max: 100,
+                  interval: 10,
+              }
+          ],
+          series: [
+              {
+                  name:'平均成绩',
+                  type:'bar',
+                  data:ret['score_dormtime_ave'],
+                  itemStyle:{
+                     normal:{
+                       color:'#4f9D9D',
+                       }
+                }
+              },
+              {
+                  name:'最高成绩',
+                  type:'line',
+                  data:ret['score_dormtime_max'],
+                  itemStyle:{
+                     normal:{
+                       color:'#EA7500'
+                       }
+                }
+              },
+              {
+                  name:'最低成绩',
+                  type:'line',
+                  data:ret['score_dormtime_min']
+              }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        //累积分布函数
+        var myChart = echarts.init(document.getElementById('chart-grade-5'));
+        option = {
+          title: {
+              text: '累积分布函数',
+          },
+          tooltip: {
+              trigger: 'axis'
+          },
+          toolbox: {
+              show: true,
+              feature: {
+                  dataZoom: {
+                      yAxisIndex: 'none'
+                  },
+                  dataView: {readOnly: false},
+                  magicType: {type: ['line', 'bar']},
+                  restore: {},
+                  saveAsImage: {}
+              }
+          },
+          xAxis:  {
+              type: 'category',
+              boundaryGap: false,
+              data: ['0','10', '20', '30', '40', '50', '60', '70', '80', '90', '100']
+          },
+          yAxis: {
+              type: 'value',
+              axisLabel: {
+                  formatter: '{value}'
+              }
+          },
+          series: [
+              {
+                  name:'概率密度',
+                  type:'line',
+                  data: ret['cdfall']
+              }
+          ]
+        };
+        myChart.setOption(option);
+
+        //概率密度函数
+        var myChart = echarts.init(document.getElementById('chart-grade-6'));
+        option = {
+          title: {
+              text: '概率密度函数',
+          },
+          tooltip: {
+              trigger: 'axis'
+          },
+          toolbox: {
+              show: true,
+              feature: {
+                  dataZoom: {
+                      yAxisIndex: 'none'
+                  },
+                  dataView: {readOnly: false},
+                  magicType: {type: ['line', 'bar']},
+                  restore: {},
+                  saveAsImage: {}
+              }
+          },
+          xAxis:  {
+              type: 'category',
+              boundaryGap: false,
+              data: ['0','10', '20', '30', '40', '50', '60', '70', '80', '90', '100']
+          },
+          yAxis: {
+              type: 'value',
+              axisLabel: {
+                  formatter: '{value}'
+              }
+          },
+          series: [
+              {
+                  name:'概率密度',
+                  type:'line',
+                  data: ret['pdfall'],
+                  markPoint: {
+                      data: [
+                          {type: 'max', name: '最大值'},
+                          {type: 'min', name: '最小值'}
+                      ]
+                  },
+                  markLine: {
+                      data: [
+                          {type: 'average', name: '平均值'}
+                      ]
+                  }
+              },
+          ]
+        };
+        myChart.setOption(option);
+
+        //体质成绩分布
+        var myChart = echarts.init(document.getElementById('chart-health-1'));
+
+        option = {
+          title : {
+              text: '体质测试成绩分布',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-50','50-60','60-70','70-80','80-90', '90-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'体质测试',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['health_num'][0], name:'0-50'},
+                      {value:ret['health_num'][1], name:'50-60'},
+                      {value:ret['health_num'][2], name:'60-70'},
+                      {value:ret['health_num'][3], name:'70-80'},
+                      {value:ret['health_num'][4], name:'80-90'},
+                      {value:ret['health_num'][5], name:'90-100'}
+                  ]
+              }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        //体质与性别
+        var myChart = echarts.init(document.getElementById('chart-health-2'));
+        var option = {
+          title : {
+              text: '体质与性别',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['成绩', '成绩', '性别'],
+                  [ret['ave_health_score'], ret['ave_health_score'], '总体'],
+                  [ret['ave_health_score_male'], ret['ave_health_score_male'], '男'],
+                  [ret['ave_health_score_female'], ret['ave_health_score_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '成绩'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['高', '底'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '成绩'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+
+        // 体质与回寝时间
+        var myChart = echarts.init(document.getElementById('chart-health-3'));
+        option = {
+          title : {
+                  text: '体质与回寝时间',
+                  subtext: '横坐标为一学期平均回寝时间',
+                  x:'center'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          legend: {
+              data:['平均成绩','最高成绩','最低成绩'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['0','6','12','15','18','21','22','23'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: '成绩',
+                  min: 0,
+                  max: 100,
+                  interval: 10,
+              }
+          ],
+          series: [
+              {
+                  name:'平均成绩',
+                  type:'bar',
+                  data:ret['health_dormtime_ave'],
+                  itemStyle:{
+                     normal:{
+                       color:'#4f9D9D',
+                       }
+                }
+              },
+              {
+                  name:'最高成绩',
+                  type:'line',
+                  data:ret['health_dormtime_max'],
+                  itemStyle:{
+                     normal:{
+                       color:'#EA7500',
+                       }
+                }
+              },
+              {
+                  name:'最低成绩',
+                  type:'line',
+                  data:ret['health_dormtime_min']
+              }
+          ]
+        };
+        myChart.setOption(option);
+
+        var myChart = echarts.init(document.getElementById('chart-health-4'));
+      option = {
+          title : {
+              text: '去校医院次数',
+              subtext: '研究每人的一学期的总次数',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-10','10-20','20-30','30-40','40-50']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['hos_dis'][0], name:'0-10'},
+                      {value:ret['hos_dis'][1], name:'10-20'},
+                      {value:ret['hos_dis'][2], name:'20-30'},
+                      {value:ret['hos_dis'][3], name:'30-40'},
+                      {value:ret['hos_dis'][4], name:'40-50'}
+                  ]
+              }
+          ]
+      };
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-health-5'));
+      var option = {
+          title : {
+              text: '去校医院次数与性别',
+              subtext: '研究平均每人一学期总次数',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['次数', '次数', '性别'],
+                  [ret['ave_hos'], ret['ave_hos'], '总体'],
+                  [ret['ave_hos_male'], ret['ave_hos_male'], '男'],
+                  [ret['ave_hos_female'], ret['ave_hos_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '次数'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 100,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '次'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+      myChart.setOption(option);
+
+        var myChart = echarts.init(document.getElementById('chart-life-1'));
+        option = {
+          title : {
+              text: '回寝时间分布',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0:00-6:00','6:00-12:00','12:00-18:00','18:00-22:00','22:00-24:00']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['dorm_num'][0], name:'0:00-6:00'},
+                      {value:ret['dorm_num'][1], name:'6:00-12:00'},
+                      {value:ret['dorm_num'][2], name:'12:00-18:00'},
+                      {value:ret['dorm_num'][3], name:'18:00-22:00'},
+                      {value:ret['dorm_num'][4], name:'22:00-24:00'}
+                  ]
+              }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        var myChart = echarts.init(document.getElementById('chart-life-2'));
+        var option = {
+          title : {
+              text: '回寝时间与性别',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均回寝时间', '平均回寝时间', '性别'],
+                  [ret['ave_time'], ret['ave_time'], '总体'],
+                  [ret['ave_time_male'], ret['ave_time_male'], '男'],
+                  [ret['ave_time_female'], ret['ave_time_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '平均回寝时间'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['晚', '早'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '平均\n回寝时间'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+
+
+        var myChart = echarts.init(document.getElementById('chart-life-3'));
+
+        option = {
+          title : {
+              text: '消费分布',
+              subtext: '研究每人的平均每月消费',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-100','100-200','200-300','300-400','400-500']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['cost_dis'][0], name:'0-100'},
+                      {value:ret['cost_dis'][1], name:'100-200'},
+                      {value:ret['cost_dis'][2], name:'200-300'},
+                      {value:ret['cost_dis'][3], name:'300-400'},
+                      {value:ret['cost_dis'][4], name:'400-500'}
+                  ]
+              }
+          ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-life-4'));
+      var option = {
+          title : {
+              text: '消费与性别',
+              subtext: '研究每人每月平均消费',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均消费', '平均消费', '性别'],
+                  [ret['ave_cost'], ret['ave_cost'], '总体'],
+                  [ret['ave_cost_male'], ret['ave_cost_male'], '男'],
+                  [ret['ave_cost_female'], ret['ave_cost_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '平均消费'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 100,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '平均\n消费'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-library-1'));
+
+      option = {
+          title : {
+              text: '图书馆访问次数分布',
+              subtext: '纵坐标为一学期访问图书馆总次数',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-20','20-40','40-60','60-80','80-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'人数（占比）',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['visit_dis'][0], name:'0-20'},
+                      {value:ret['visit_dis'][1], name:'20-40'},
+                      {value:ret['visit_dis'][2], name:'40-60'},
+                      {value:ret['visit_dis'][3], name:'60-80'},
+                      {value:ret['visit_dis'][4], name:'80-100'}
+                  ]
+              }
+          ]
+      };
+
+
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-library-2'));
+      var option = {
+          title : {
+              text: '图书馆访问与性别',
+              subtext: '横坐标为每人一学期访问图书馆总次数的均值',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均值', '平均值', '性别'],
+                  [ret['ave_visit'], ret['ave_visit'], '总体'],
+                  [ret['ave_visit_male'], ret['ave_visit_male'], '男'],
+                  [ret['ave_visit_female'], ret['ave_visit_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '次'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '次'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-library-3'));
+
+      option = {
+          title : {
+              text: '借书次数分布',
+              subtext: '纵坐标为一学期借书总次数',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-20','20-40','40-60','60-80','80-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'人数（占比)',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['book_dis'][0], name:'0-20'},
+                      {value:ret['book_dis'][1], name:'20-40'},
+                      {value:ret['book_dis'][2], name:'40-60'},
+                      {value:ret['book_dis'][3], name:'60-80'},
+                      {value:ret['book_dis'][4], name:'80-100'}
+                  ]
+              }
+          ]
+      };
+
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-library-4'));
+      var option = {
+          title : {
+              text: '借书次数与性别',
+              subtext: '横坐标为每人一学期借书总次数的均值',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均值', '平均值', '性别'],
+                  [ret['ave_book'], ret['ave_book'], '总体'],
+                  [ret['ave_book_male'], ret['ave_book_male'], '男'],
+                  [ret['ave_book_female'], ret['ave_book_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '次'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '次'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+      myChart.setOption(option);
+
+
+      var myChart = echarts.init(document.getElementById('chart-health-6'));
+      option = {
+          title : {
+                  text: '去校医院次数与体质',
+                  subtext: '横坐标为体质测试成绩',
+                  x:'25%'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          legend: {
+              data:['平均次数','最高次数','最低次数'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['10','20','30','40','50','60','70', '80', '90', '100'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: '次',
+                  min: 0,
+                  max: 10,
+                  interval: 1,
+              }
+          ],
+          series: [
+              {
+                  name:'平均次数',
+                  type:'bar',
+                  data:ret['hos_health'],
+                  itemStyle:{
+                     normal:{
+                       color:'#4f9D9D'
+                       }
+                }
+              },
+              {
+                  name:'最高次数',
+                  type:'line',
+                  data:ret['hos_health_max'],
+                  itemStyle:{
+                     normal:{
+                       color:'#EA7500'
+                       }
+                }
+              },
+              {
+                  name:'最低次数',
+                  type:'line',
+                  data:ret['hos_health_min']
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+
+
+
+
+
+        });
+      }
+
+
+    </script>
+
+  <script>
+      var myChart = echarts.init(document.getElementById('chart-geo-1'));
+		option = {
+            title: {
+                text: '学生地域分布',
+            },
+			tooltip: {
+                trigger: 'item',
+                formatter: '{b}<br/>{c} (人)'
+            },
+            toolbox: {
+                    show: true,
+                    orient: 'vertical',
+                    left: 'right',
+                    top: 'center',
+                    feature: {
+                        dataView: {readOnly: false},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+            visualMap: {
+                    min: 0,
+                    max: 10,
+                    text:['多','少'],
+                    realtime: false,
+                    calculable: true,
+                    inRange: {
+                        color: ['lightskyblue','yellow', 'orangered']
+                    }
+                },
+			series: [
+				{
+					name: '中国',
+					type: 'map',
+					mapType: 'china',
+					itemStyle:{
+                            normal:{label:{show:true}},
+                            emphasis:{label:{show:true}}
+                        },
+					data:[
+						{name:'四川', value: ret['province_num']['四川']},
+                        {name:'江西', value: ret['province_num']['江西']},
+                        {name:'江苏', value: ret['province_num']['江苏']},
+                        {name:'山东', value: ret['province_num']['山东']},
+                        {name:'安徽', value: ret['province_num']['安徽']},
+                        {name:'上海', value: ret['province_num']['上海']},
+                        {name:'重庆', value: ret['province_num']['重庆']},
+                        {name:'福建', value: ret['province_num']['福建']},
+                        {name:'河南', value: ret['province_num']['河南']},
+                        {name:'河北', value: ret['province_num']['河北']},
+                        {name:'广东', value: ret['province_num']['广东']},
+                        {name:'广西', value: ret['province_num']['广西']},
+                        {name:'山西', value: ret['province_num']['山西']},
+                        {name:'天津', value: ret['province_num']['天津']},
+                        {name:'湖北', value: ret['province_num']['湖北']},
+                        {name:'浙江', value: ret['province_num']['浙江']},
+                        {name:'陕西', value: ret['province_num']['陕西']},
+                        {name:'内蒙古', value: ret['province_num']['内蒙古']},
+                        {name:'海南', value: ret['province_num']['海南']},
+                        {name:'辽宁', value: ret['province_num']['辽宁']},
+                        {name:'吉林', value: ret['province_num']['吉林']},
+                        {name:'黑龙江', value: ret['province_num']['黑龙江']},
+                        {name:'湖南', value: ret['province_num']['湖南']},
+                        {name:'贵州', value: ret['province_num']['贵州']},
+                        {name:'云南', value: ret['province_num']['云南']},
+                        {name:'甘肃', value: ret['province_num']['甘肃']},
+                        {name:'青海', value: ret['province_num']['青海']},
+                        {name:'台湾', value: ret['province_num']['台湾']},
+                        {name:'北京', value: ret['province_num']['北京']},
+                        {name:'西藏', value: ret['province_num']['西藏']},
+                        {name:'宁夏', value: ret['province_num']['宁夏']},
+                        {name:'新疆', value: ret['province_num']['新疆']},
+                        {name:'香港', value: ret['province_num']['香港']},
+                        {name:'澳门', value: ret['province_num']['澳门']}
+					]
+				}
+			]
+		};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        var myChart = echarts.init(document.getElementById('chart-geo-2'));
+		option = {
+            title: {
+                text: '各地域学生的平均成绩'
+            },
+			tooltip: {
+                trigger: 'item',
+                formatter: '{b}<br/>{c} (分)'
+            },
+            toolbox: {
+                    show: true,
+                    orient: 'vertical',
+                    left: 'right',
+                    top: 'center',
+                    feature: {
+                        dataView: {readOnly: false},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+            visualMap: {
+                    min: 70,
+                    max: 100,
+                    text:['多','少'],
+                    realtime: false,
+                    calculable: true,
+                    inRange: {
+                        color: ['lightskyblue','yellow', 'orangered']
+                    }
+                },
+			series: [
+				{
+					name: '中国',
+					type: 'map',
+					mapType: 'china',
+					itemStyle:{
+                            normal:{label:{show:true}},
+                            emphasis:{label:{show:true}}
+                        },
+					data:[
+						{name:'四川', value: ret['score_province']['四川']},
+                        {name:'江西', value: ret['score_province']['江西']},
+                        {name:'江苏', value: ret['score_province']['江苏']},
+                        {name:'山东', value: ret['score_province']['山东']},
+                        {name:'安徽', value: ret['score_province']['安徽']},
+                        {name:'上海', value: ret['score_province']['上海']},
+                        {name:'重庆', value: ret['score_province']['重庆']},
+                        {name:'福建', value: ret['score_province']['福建']},
+                        {name:'河南', value: ret['score_province']['河南']},
+                        {name:'河北', value: ret['score_province']['河北']},
+                        {name:'广东', value: ret['score_province']['广东']},
+                        {name:'广西', value: ret['score_province']['广西']},
+                        {name:'山西', value: ret['score_province']['山西']},
+                        {name:'天津', value: ret['score_province']['天津']},
+                        {name:'湖北', value: ret['score_province']['湖北']},
+                        {name:'浙江', value: ret['score_province']['浙江']},
+                        {name:'陕西', value: ret['score_province']['陕西']},
+                        {name:'内蒙古', value: ret['score_province']['内蒙古']},
+                        {name:'海南', value: ret['score_province']['海南']},
+                        {name:'辽宁', value: ret['score_province']['辽宁']},
+                        {name:'吉林', value: ret['score_province']['吉林']},
+                        {name:'黑龙江', value: ret['score_province']['黑龙江']},
+                        {name:'湖南', value: ret['score_province']['湖南']},
+                        {name:'贵州', value: ret['score_province']['贵州']},
+                        {name:'云南', value: ret['score_province']['云南']},
+                        {name:'甘肃', value: ret['score_province']['甘肃']},
+                        {name:'青海', value: ret['score_province']['青海']},
+                        {name:'台湾', value: ret['score_province']['台湾']},
+                        {name:'北京', value: ret['score_province']['北京']},
+                        {name:'西藏', value: ret['score_province']['西藏']},
+                        {name:'宁夏', value: ret['score_province']['宁夏']},
+                        {name:'新疆', value: ret['score_province']['新疆']},
+                        {name:'香港', value: ret['score_province']['香港']},
+                        {name:'澳门', value: ret['score_province']['澳门']}
+					]
+				}
+			]
+		};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        //学生成绩分布
+        var myChart = echarts.init(document.getElementById('chart-grade-1'));
+        option = {
+          title : {
+              text: '学生成绩分布',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-50','50-60', '60-70','70-80','80-90','90-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['num'][0], name:'0-50'},
+                      {value:ret['num'][1], name:'50-60'},
+                      {value:ret['num'][2], name:'60-70'},
+                      {value:ret['num'][3], name:'70-80'},
+                      {value:ret['num'][4], name:'80-90'},
+                      {value:ret['num'][5], name:'90-100'}
+                  ]
+              }
+          ]
+        };
+        myChart.setOption(option);
+
+        //成绩与性别
+        var myChart = echarts.init(document.getElementById('chart-grade-2'));
+        var option = {
+          title : {
+              text: '成绩与性别',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均成绩', '平均成绩', '性别'],
+                  [ret['ave_score'], ret['ave_score'], '总体'],
+                  [ret['ave_score_male'], ret['ave_score_male'], '男'],
+                  [ret['ave_score_female'], ret['ave_score_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '平均成绩'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 100,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '平均\n成绩'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+        };
+        myChart.setOption(option);
+
+        var myChart = echarts.init(document.getElementById('chart-grade-3'));
+          option = {
+              title : {
+                      text: '成绩与图书馆访问',
+                      subtext: '横坐标为一学期图书馆访问总次数',
+                      x:'center'
+              },
+              tooltip: {
+                  trigger: 'axis',
+                  axisPointer: {
+                      type: 'cross',
+                      crossStyle: {
+                          color: '#999'
+                      }
+                  }
+              },
+              toolbox: {
+                  feature: {
+                      dataView: {show: true, readOnly: false},
+                      magicType: {show: true, type: ['line', 'bar']},
+                      restore: {show: true},
+                      saveAsImage: {show: true}
+                  }
+              },
+              legend: {
+                  data:['平均成绩','最高成绩','最低成绩'],
+                  y: 'bottom'
+              },
+              xAxis: [
+                  {
+                      type: 'category',
+                      data: ['0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90'],
+                      axisPointer: {
+                          type: 'shadow'
+                      }
+                  }
+              ],
+              yAxis: [
+                  {
+                      type: 'value',
+                      name: '成绩',
+                      min: 0,
+                      max: 100,
+                      interval: 10,
+                  }
+              ],
+              series: [
+                  {
+                      name:'平均成绩',
+                      type:'bar',
+                      data:ret['score_lib_ave'],
+                      itemStyle:{
+                         normal:{
+                           color:'#4f9D9D',
+                           }
+                    }
+                  },
+                  {
+                      name:'最高成绩',
+                      type:'line',
+                      data:ret['score_lib_max'],
+                      itemStyle:{
+                         normal:{
+                           color:'#EA7500',
+                           }
+                    }
+                  },
+                  {
+                      name:'最低成绩',
+                      type:'line',
+                      data:ret['score_lib_min']
+                  }
+              ]
+          };
+          // 使用刚指定的配置项和数据显示图表。
+          myChart.setOption(option);
+
+        //成绩与回寝时间
+        var myChart = echarts.init(document.getElementById('chart-grade-4'));
+        option = {
+          title : {
+                  text: '成绩与回寝时间',
+                  subtext: '横坐标为一学期平均回寝时间',
+                  x:'center'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          legend: {
+              data:['平均成绩','最高成绩','最低成绩'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['0','6','12','15','18','21','22','23'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: '成绩',
+                  min: 0,
+                  max: 100,
+                  interval: 10,
+              }
+          ],
+          series: [
+              {
+                  name:'平均成绩',
+                  type:'bar',
+                  data:ret['score_dormtime_ave'],
+                  itemStyle:{
+                     normal:{
+                       color:'#4f9D9D',
+                       }
+                }
+              },
+              {
+                  name:'最高成绩',
+                  type:'line',
+                  data:ret['score_dormtime_max'],
+                  itemStyle:{
+                     normal:{
+                       color:'#EA7500'
+                       }
+                }
+              },
+              {
+                  name:'最低成绩',
+                  type:'line',
+                  data:ret['score_dormtime_min']
+              }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        //累积分布函数
+        var myChart = echarts.init(document.getElementById('chart-grade-5'));
+        option = {
+          title: {
+              text: '累积分布函数',
+          },
+          tooltip: {
+              trigger: 'axis'
+          },
+          toolbox: {
+              show: true,
+              feature: {
+                  dataZoom: {
+                      yAxisIndex: 'none'
+                  },
+                  dataView: {readOnly: false},
+                  magicType: {type: ['line', 'bar']},
+                  restore: {},
+                  saveAsImage: {}
+              }
+          },
+          xAxis:  {
+              type: 'category',
+              boundaryGap: false,
+              data: ['0','10', '20', '30', '40', '50', '60', '70', '80', '90', '100']
+          },
+          yAxis: {
+              type: 'value',
+              axisLabel: {
+                  formatter: '{value}'
+              }
+          },
+          series: [
+              {
+                  name:'概率密度',
+                  type:'line',
+                  data: ret['cdfall']
+              }
+          ]
+        };
+        myChart.setOption(option);
+
+        //概率密度函数
+        var myChart = echarts.init(document.getElementById('chart-grade-6'));
+        option = {
+          title: {
+              text: '概率密度函数',
+          },
+          tooltip: {
+              trigger: 'axis'
+          },
+          toolbox: {
+              show: true,
+              feature: {
+                  dataZoom: {
+                      yAxisIndex: 'none'
+                  },
+                  dataView: {readOnly: false},
+                  magicType: {type: ['line', 'bar']},
+                  restore: {},
+                  saveAsImage: {}
+              }
+          },
+          xAxis:  {
+              type: 'category',
+              boundaryGap: false,
+              data: ['0','10', '20', '30', '40', '50', '60', '70', '80', '90', '100']
+          },
+          yAxis: {
+              type: 'value',
+              axisLabel: {
+                  formatter: '{value}'
+              }
+          },
+          series: [
+              {
+                  name:'概率密度',
+                  type:'line',
+                  data: ret['pdfall'],
+                  markPoint: {
+                      data: [
+                          {type: 'max', name: '最大值'},
+                          {type: 'min', name: '最小值'}
+                      ]
+                  },
+                  markLine: {
+                      data: [
+                          {type: 'average', name: '平均值'}
+                      ]
+                  }
+              },
+          ]
+        };
+        myChart.setOption(option);
+
+        //体质成绩分布
+        var myChart = echarts.init(document.getElementById('chart-health-1'));
+
+        option = {
+          title : {
+              text: '体质测试成绩分布',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-50','50-60','60-70','70-80','80-90', '90-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'体质测试',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['health_num'][0], name:'0-50'},
+                      {value:ret['health_num'][1], name:'50-60'},
+                      {value:ret['health_num'][2], name:'60-70'},
+                      {value:ret['health_num'][3], name:'70-80'},
+                      {value:ret['health_num'][4], name:'80-90'},
+                      {value:ret['health_num'][5], name:'90-100'}
+                  ]
+              }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        //体质与性别
+        var myChart = echarts.init(document.getElementById('chart-health-2'));
+        var option = {
+          title : {
+              text: '体质与性别',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['成绩', '成绩', '性别'],
+                  [ret['ave_health_score'], ret['ave_health_score'], '总体'],
+                  [ret['ave_health_score_male'], ret['ave_health_score_male'], '男'],
+                  [ret['ave_health_score_female'], ret['ave_health_score_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '成绩'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['高', '底'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '成绩'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+
+        // 体质与回寝时间
+        var myChart = echarts.init(document.getElementById('chart-health-3'));
+        option = {
+          title : {
+                  text: '体质与回寝时间',
+                  subtext: '横坐标为一学期平均回寝时间',
+                  x:'center'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          legend: {
+              data:['平均成绩','最高成绩','最低成绩'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['0','6','12','15','18','21','22','23'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: '成绩',
+                  min: 0,
+                  max: 100,
+                  interval: 10,
+              }
+          ],
+          series: [
+              {
+                  name:'平均成绩',
+                  type:'bar',
+                  data:ret['health_dormtime_ave'],
+                  itemStyle:{
+                     normal:{
+                       color:'#4f9D9D',
+                       }
+                }
+              },
+              {
+                  name:'最高成绩',
+                  type:'line',
+                  data:ret['health_dormtime_max'],
+                  itemStyle:{
+                     normal:{
+                       color:'#EA7500',
+                       }
+                }
+              },
+              {
+                  name:'最低成绩',
+                  type:'line',
+                  data:ret['health_dormtime_min']
+              }
+          ]
+        };
+        myChart.setOption(option);
+
+        var myChart = echarts.init(document.getElementById('chart-health-4'));
+      option = {
+          title : {
+              text: '去校医院次数',
+              subtext: '研究每人的一学期的总次数',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-10','10-20','20-30','30-40','40-50']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['hos_dis'][0], name:'0-10'},
+                      {value:ret['hos_dis'][1], name:'10-20'},
+                      {value:ret['hos_dis'][2], name:'20-30'},
+                      {value:ret['hos_dis'][3], name:'30-40'},
+                      {value:ret['hos_dis'][4], name:'40-50'}
+                  ]
+              }
+          ]
+      };
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-health-5'));
+      var option = {
+          title : {
+              text: '去校医院次数与性别',
+              subtext: '研究平均每人一学期总次数',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['次数', '次数', '性别'],
+                  [ret['ave_hos'], ret['ave_hos'], '总体'],
+                  [ret['ave_hos_male'], ret['ave_hos_male'], '男'],
+                  [ret['ave_hos_female'], ret['ave_hos_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '次数'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 100,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '次'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+      myChart.setOption(option);
+
+        var myChart = echarts.init(document.getElementById('chart-life-1'));
+        option = {
+          title : {
+              text: '回寝时间分布',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0:00-6:00','6:00-12:00','12:00-18:00','18:00-22:00','22:00-24:00']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['dorm_num'][0], name:'0:00-6:00'},
+                      {value:ret['dorm_num'][1], name:'6:00-12:00'},
+                      {value:ret['dorm_num'][2], name:'12:00-18:00'},
+                      {value:ret['dorm_num'][3], name:'18:00-22:00'},
+                      {value:ret['dorm_num'][4], name:'22:00-24:00'}
+                  ]
+              }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        var myChart = echarts.init(document.getElementById('chart-life-2'));
+        var option = {
+          title : {
+              text: '回寝时间与性别',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均回寝时间', '平均回寝时间', '性别'],
+                  [ret['ave_time'], ret['ave_time'], '总体'],
+                  [ret['ave_time_male'], ret['ave_time_male'], '男'],
+                  [ret['ave_time_female'], ret['ave_time_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '平均回寝时间'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['晚', '早'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '平均\n回寝时间'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+
+
+        var myChart = echarts.init(document.getElementById('chart-life-3'));
+
+        option = {
+          title : {
+              text: '消费分布',
+              subtext: '研究每人的平均每月消费',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-100','100-200','200-300','300-400','400-500']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'成绩分布',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['cost_dis'][0], name:'0-100'},
+                      {value:ret['cost_dis'][1], name:'100-200'},
+                      {value:ret['cost_dis'][2], name:'200-300'},
+                      {value:ret['cost_dis'][3], name:'300-400'},
+                      {value:ret['cost_dis'][4], name:'400-500'}
+                  ]
+              }
+          ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-life-4'));
+      var option = {
+          title : {
+              text: '消费与性别',
+              subtext: '研究每人每月平均消费',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均消费', '平均消费', '性别'],
+                  [ret['ave_cost'], ret['ave_cost'], '总体'],
+                  [ret['ave_cost_male'], ret['ave_cost_male'], '男'],
+                  [ret['ave_cost_female'], ret['ave_cost_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '平均消费'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 100,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '平均\n消费'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-library-1'));
+
+      option = {
+          title : {
+              text: '图书馆访问次数分布',
+              subtext: '纵坐标为一学期访问图书馆总次数',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-20','20-40','40-60','60-80','80-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'人数（占比）',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['visit_dis'][0], name:'0-20'},
+                      {value:ret['visit_dis'][1], name:'20-40'},
+                      {value:ret['visit_dis'][2], name:'40-60'},
+                      {value:ret['visit_dis'][3], name:'60-80'},
+                      {value:ret['visit_dis'][4], name:'80-100'}
+                  ]
+              }
+          ]
+      };
+
+
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-library-2'));
+      var option = {
+          title : {
+              text: '图书馆访问与性别',
+              subtext: '横坐标为每人一学期访问图书馆总次数的均值',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均值', '平均值', '性别'],
+                  [ret['ave_visit'], ret['ave_visit'], '总体'],
+                  [ret['ave_visit_male'], ret['ave_visit_male'], '男'],
+                  [ret['ave_visit_female'], ret['ave_visit_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '次'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '次'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-library-3'));
+
+      option = {
+          title : {
+              text: '借书次数分布',
+              subtext: '纵坐标为一学期借书总次数',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+              orient : 'vertical',
+              x : 'left',
+              data:['0-20','20-40','40-60','60-80','80-100']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {
+                      show: true,
+                      type: ['pie', 'funnel'],
+                      option: {
+                          funnel: {
+                              x: '25%',
+                              width: '50%',
+                              funnelAlign: 'left',
+                              max: 1548
+                          }
+                      }
+                  },
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          series : [
+              {
+                  name:'人数（占比)',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:ret['book_dis'][0], name:'0-20'},
+                      {value:ret['book_dis'][1], name:'20-40'},
+                      {value:ret['book_dis'][2], name:'40-60'},
+                      {value:ret['book_dis'][3], name:'60-80'},
+                      {value:ret['book_dis'][4], name:'80-100'}
+                  ]
+              }
+          ]
+      };
+
+      myChart.setOption(option);
+
+      var myChart = echarts.init(document.getElementById('chart-library-4'));
+      var option = {
+          title : {
+              text: '借书次数与性别',
+              subtext: '横坐标为每人一学期借书总次数的均值',
+              x:'center'
+          },
+          dataset: {
+              source: [
+                  ['平均值', '平均值', '性别'],
+                  [ret['ave_book'], ret['ave_book'], '总体'],
+                  [ret['ave_book_male'], ret['ave_book_male'], '男'],
+                  [ret['ave_book_female'], ret['ave_book_female'], '女']
+              ]
+          },
+          grid: {containLabel: true},
+          xAxis: {name: '次'},
+          yAxis: {type: 'category'},
+          visualMap: {
+              orient: 'horizontal',
+              left: 'center',
+              min: 0,
+              max: 24,
+              text: ['高', '低'],
+              // Map the score column to color
+              dimension: 0,
+              inRange: {
+                  color: ['#D7DA8B', '#E15457']
+              }
+          },
+          series: [
+              {
+                  type: 'bar',
+                  encode: {
+                      // Map the "amount" column to X axis.
+                      x: { formatter: '次'},
+                      // Map the "product" column to Y axis
+                      y: '性别'
+                  }
+              }
+          ]
+      };
+      myChart.setOption(option);
+
+
+      var myChart = echarts.init(document.getElementById('chart-health-6'));
+      option = {
+          title : {
+                  text: '去校医院次数与体质',
+                  subtext: '横坐标为体质测试成绩',
+                  x:'25%'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          legend: {
+              data:['平均次数','最高次数','最低次数'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['10','20','30','40','50','60','70', '80', '90', '100'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: '次',
+                  min: 0,
+                  max: 10,
+                  interval: 1,
+              }
+          ],
+          series: [
+              {
+                  name:'平均次数',
+                  type:'bar',
+                  data:ret['hos_health'],
+                  itemStyle:{
+                     normal:{
+                       color:'#4f9D9D'
+                       }
+                }
+              },
+              {
+                  name:'最高次数',
+                  type:'line',
+                  data:ret['hos_health_max'],
+                  itemStyle:{
+                     normal:{
+                       color:'#EA7500'
+                       }
+                }
+              },
+              {
+                  name:'最低次数',
+                  type:'line',
+                  data:ret['hos_health_min']
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+  </script>
+
+
+
+  </body>
+</html>
