@@ -1,0 +1,61 @@
+<style>
+    span {
+        font-size: 15px;
+        font-weight: bold;
+    {#font-family: "微软雅黑";#}
+    }
+</style>
+
+<aside>
+    <div id="sidebar" class="nav-collapse ">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu" id="nav-accordion">
+
+            <p class="centered"><a href="/templates/servermaterial/profile.html"><img
+                    src="/templates/servermaterial/assets/img/ui-sam.jpg" class="img-circle" width="60"></a></p>
+            <h5 class="centered">您好，{{ request.session.userName }}老师！</h5>
+
+            <li class="sub-men">
+                <a href="/web/index">
+                    <i class="fa fa-tasks"></i>
+                    <span>首页</span>
+                </a>
+            </li>
+
+            <li class="sub-men">
+                <a href="/web/supervision">
+                    <i class="fa fa-tasks"></i>
+                    <span>数据可视化</span>
+                </a>
+            </li>
+
+            <li class="sub-menu">
+                <a href="/web/monitor">
+                    <i class="fa fa-book"></i>
+                    <span>监测预警</span>
+                </a>
+            </li>
+
+            <li class="sub-men">
+                <a href="/web/result">
+                    <i class="fa fa-tasks"></i>
+                    <span>学生画像</span>
+                </a>
+            </li>
+
+            <li class="sub-menu">
+                <a href="/web/recommend">
+                    <i class="fa fa-book"></i>
+                    <span>图书推荐</span>
+                </a>
+            </li>
+            <li class="sub-menu">
+                <a href="/web/data_import_export">
+                    <i class="fa fa-tasks"></i>
+                    <span>数据处理</span>
+                </a>
+            </li>
+        </ul>
+        <!-- sidebar menu end-->
+    </div>
+</aside>

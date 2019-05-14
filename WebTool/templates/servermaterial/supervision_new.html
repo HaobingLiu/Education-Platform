@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Dashboard">
+    <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <title>学生成长分析平台</title>
+
+    <!-- Favicons -->
+    <link href="/templates/servermaterial/img/favicon.png" rel="icon">
+    <link href="/templates/servermaterial/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Bootstrap core CSS -->
+    <link href="/templates/servermaterial/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!--external css-->
+    <link href="/templates/servermaterial/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link href="/templates/servermaterial/lib/advanced-datatable/css/demo_page.css" rel="stylesheet" />
+    <link href="/templates/servermaterial/lib/advanced-datatable/css/demo_table.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/templates/servermaterial/lib/advanced-datatable/css/DT_bootstrap.css" />
+    <link rel="stylesheet" href="http://cdn.oesmith.co.uk/morris-0.4.3.min.css">
+    <!-- Custom styles for this template -->
+    <link href="/templates/servermaterial/css/style.css" rel="stylesheet">
+    <link href="/templates/servermaterial/css/style-responsive.css" rel="stylesheet">
+
+    <!-- =======================================================
+        Template Name: Dashio
+        Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
+        Author: TemplateMag.com
+        License: https://templatemag.com/license/
+    ======================================================= -->
+
+  </head>
+  <body>
+    <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS
+      *********************************************************************************************************************************************************** -->
+    <!--header start-->
+    {% include 'servermaterial/header.html' %}
+    <!--header end-->
+
+    <!--sidebar start-->
+    {% include 'servermaterial/sidebar.html' %}
+    <!--sidebar end-->
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+      <section class="wrapper site-min-height">
+        <div class="col-lg-12 mt">
+          <div class="row content-panel">
+            <div class="col-lg-12 detailed mt">
+              <h4>可视化选项</h4>
+              <form action="/web/inquiry/" method="get" role="form" class="form-horizontal">
+                <div class="form-group col-lg-4">
+                  <label class="col-lg-3 control-label">学院</label>
+                  <div class="col-lg-8">
+                    <select class="form-control" id="school">
+                      <option value="电子信息与电气工程学院">电子信息与电气工程学院</option>
+                      <option value="机械与动力工程学院">机械与动力工程学院</option>
+                      <option value="人文学院">人文学院</option>
+                      <option value="数学科学学院">数学科学学院</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group col-lg-4">
+                  <label class="col-lg-3 control-label">专业</label>
+                  <div class="col-lg-8">
+                    <input type="text" placeholder="电信" class="form-control">
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group col-lg-4">
+                  <label class="col-lg-3 control-label">年级</label>
+                  <div class="col-lg-8">
+                    <select class="form-control">
+                      <option value="volvo">本科一年级</option>
+                      <option value="volvo">本科二年级</option>
+                      <option value="saab">本科三年级</option>
+                      <option value="mercedes">本科四年级</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group col-lg-4">
+                  <label class="col-lg-3 control-label">班级</label>
+                  <div class="col-lg-8">
+                    <select class="form-control">
+                      <option value="volvo">B13033910</option>
+                      <option value="volvo">B14033910</option>
+                      <option value="saab">B15033910</option>
+                      <option value="mercedes">B16033910</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group col-lg-6">
+                  <button class="btn btn-theme" id="inquirybtn" type="button" onclick="charts()">查询</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12 detailed">
+          <div class="row content-panel">
+            <h4>可视化结果</h4>
+            <div class="panel-heading">
+              <ul class="nav nav-tabs nav-justified">
+                <li class="active">
+                  <a data-toggle="tab" href="#geo_dis">地域分布</a>
+                </li>
+                <li>
+                  <a data-toggle="tab" href="#grades">成绩分析</a>
+                </li>
+                <li>
+                  <a data-toggle="tab" href="#activity">德育情况</a>
+                </li>
+                <li>
+                  <a data-toggle="tab" href="#life">校园生活</a>
+                </li>
+                 <li>
+                  <a data-toggle="tab" href="#health">身体健康</a>
+                </li>
+                <li>
+                  <a data-toggle="tab" href="#library">图书馆访问</a>
+                </li>
+              </ul>
+            </div>
+            <!-- /panel-heading -->
+            <div class="panel-body">
+              <div class="tab-content">
+                <!-- /地域分布 -->
+                <div id="geo_dis" class="tab-pane active">
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-geo-1" style="width: 450px;height:450px;"></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /成绩分析 -->
+                <div id="grades" class="tab-pane active">
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-grade-1" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-grade-2" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                  <div class="row mt">
+                    <div class="col-lg-5 col-lg-offset-1 detailed">
+                      <div id="chart-grade-3" style="width: 450px;height:400px;"></div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div id="chart-grade-4" style="width: 450px;height:400px;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /tab-content -->
+            </div>
+            <!-- /panel-body -->
+          </div>
+          <!-- /row content-panel -->
+        </div>
+        <!-- /col-lg-12 -->
+      </section>
+      <!-- /wrapper -->
+    </section>
+    <!-- /MAIN CONTENT -->
+    <!--main content end-->
+
+    <!--footer start-->
+    {% include 'servermaterial/footer.html' %}
+    <!--footer end-->
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="/templates/servermaterial/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" language="javascript" src="/templates/servermaterial/lib/advanced-datatable/js/jquery.js"></script>
+    <script src="/templates/servermaterial/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script class="include" type="text/javascript" src="/templates/servermaterial/lib/jquery.dcjqaccordion.2.7.js"></script>
+    <script src="/templates/servermaterial/lib/jquery.scrollTo.min.js"></script>
+    <script src="/templates/servermaterial/lib/jquery.nicescroll.js" type="text/javascript"></script>
+    <!--common script for all pages-->
+    <script src="/templates/servermaterial/lib/common-scripts.js"></script>
+    <!--script for this page-->
+    <script src="/templates/servermaterial/lib/jquery-ui-1.9.2.custom.min.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-fileupload/bootstrap-fileupload.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/date.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/moment.min.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
+    <script src="/templates/servermaterial/lib/advanced-form-components.js"></script>
+    <!--script for this page-->
+    <script src="/templates/servermaterial/lib/morris-conf.js"></script>
+    <script src="/templates/servermaterial/lib/morris/morris.min.js"></script>
+    <script src="/templates/servermaterial/lib/raphael/raphael.min.js"></script>
+    <!--script for charts-->
+    <script src="/templates/servermaterial/lib/echarts.min.js"></script>
+
+    <script type="text/javascript" language="javascript" src="/templates/servermaterial/lib/advanced-datatable/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/advanced-datatable/js/DT_bootstrap.js"></script>
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-geo-1'));
+
+      function random(){
+          var r = Math.round(Math.random() * 100);
+          return (r * (r % 2 == 0 ? 1 : -1));
+      }
+
+      function randomDataArray() {
+          var d = [];
+          var len = 100;
+          while (len--) {
+              d.push([
+                  random(),
+                  random(),
+                  Math.abs(random()),
+              ]);
+          }
+          return d;
+      }
+
+      option = {
+          tooltip : {
+              trigger: 'axis',
+              showDelay : 0,
+              axisPointer:{
+                  show: true,
+                  type : 'cross',
+                  lineStyle: {
+                      type : 'dashed',
+                      width : 1
+                  }
+              }
+          },
+          legend: {
+              data:['scatter1','scatter2']
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  mark : {show: true},
+                  dataZoom : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          xAxis : [
+              {
+                  type : 'value',
+                  splitNumber: 4,
+                  scale: true
+              }
+          ],
+          yAxis : [
+              {
+                  type : 'value',
+                  splitNumber: 4,
+                  scale: true
+              }
+          ],
+          series : [
+              {
+                  name:'scatter1',
+                  type:'scatter',
+                  symbolSize: function (value){
+                      return Math.round(value[2] / 5);
+                  },
+                  data: randomDataArray()
+              },
+              {
+                  name:'scatter2',
+                  type:'scatter',
+                  symbolSize: function (value){
+                      return Math.round(value[2] / 5);
+                  },
+                  data: randomDataArray()
+              }
+          ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+      var myChart = echarts.init(document.getElementById('chart-grade-1'));
+
+      option = {
+    title : {
+        text: '南丁格尔玫瑰图',
+        subtext: '纯属虚构',
+        x:'center'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        x : 'center',
+        y : 'bottom',
+        data:['rose1','rose2','rose3','rose4','rose5','rose6','rose7','rose8']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType : {
+                show: true,
+                type: ['pie', 'funnel']
+            },
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    calculable : true,
+    series : [
+        {
+            name:'半径模式',
+            type:'pie',
+            radius : [20, 110],
+            center : ['25%', 200],
+            roseType : 'radius',
+            width: '40%',       // for funnel
+            max: 40,            // for funnel
+            itemStyle : {
+                normal : {
+                    label : {
+                        show : false
+                    },
+                    labelLine : {
+                        show : false
+                    }
+                },
+                emphasis : {
+                    label : {
+                        show : true
+                    },
+                    labelLine : {
+                        show : true
+                    }
+                }
+            },
+            data:[
+                {value:10, name:'rose1'},
+                {value:5, name:'rose2'},
+                {value:15, name:'rose3'},
+                {value:25, name:'rose4'},
+                {value:20, name:'rose5'},
+                {value:35, name:'rose6'},
+                {value:30, name:'rose7'},
+                {value:40, name:'rose8'}
+            ]
+        },
+        {
+            name:'面积模式',
+            type:'pie',
+            radius : [30, 110],
+            center : ['75%', 200],
+            roseType : 'area',
+            x: '50%',               // for funnel
+            max: 40,                // for funnel
+            sort : 'ascending',     // for funnel
+            data:[
+                {value:10, name:'rose1'},
+                {value:5, name:'rose2'},
+                {value:15, name:'rose3'},
+                {value:25, name:'rose4'},
+                {value:20, name:'rose5'},
+                {value:35, name:'rose6'},
+                {value:30, name:'rose7'},
+                {value:40, name:'rose8'}
+            ]
+        }
+    ]
+};
+
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+
+    <script>
+      function charts()
+      {
+        var school = $("#school").val();
+        $.post("/web/inquiry/",{'school':school}, function(ret){
+            //累积分布函数
+            var myChart = echarts.init(document.getElementById('chart-1'));
+            option = {
+              title: {
+                  text: '累积分布函数',
+              },
+              tooltip: {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show: true,
+                  feature: {
+                      dataZoom: {
+                          yAxisIndex: 'none'
+                      },
+                      dataView: {readOnly: false},
+                      magicType: {type: ['line', 'bar']},
+                      restore: {},
+                      saveAsImage: {}
+                  }
+              },
+              xAxis:  {
+                  type: 'category',
+                  boundaryGap: false,
+                  data: ['0','10', '20', '30', '40', '50', '60', '70', '80', '90', '100']
+              },
+              yAxis: {
+                  type: 'value',
+                  axisLabel: {
+                      formatter: '{value}'
+                  }
+              },
+              series: [
+                  {
+                      name:'概率密度',
+                      type:'line',
+                      data: ret['cdfall']
+                  },
+              ]
+            };
+            myChart.setOption(option);
+            //概率密度函数
+            var myChart = echarts.init(document.getElementById('chart-2'));
+            option = {
+              title: {
+                  text: '概率密度函数',
+              },
+              tooltip: {
+                  trigger: 'axis'
+              },
+              toolbox: {
+                  show: true,
+                  feature: {
+                      dataZoom: {
+                          yAxisIndex: 'none'
+                      },
+                      dataView: {readOnly: false},
+                      magicType: {type: ['line', 'bar']},
+                      restore: {},
+                      saveAsImage: {}
+                  }
+              },
+              xAxis:  {
+                  type: 'category',
+                  boundaryGap: false,
+                  data: ['0','10', '20', '30', '40', '50', '60', '70', '80', '90', '100']
+              },
+              yAxis: {
+                  type: 'value',
+                  axisLabel: {
+                      formatter: '{value}'
+                  }
+              },
+              series: [
+                  {
+                      name:'概率密度',
+                      type:'line',
+                      data: ret['pdfall'],
+                      markPoint: {
+                          data: [
+                              {type: 'max', name: '最大值'},
+                              {type: 'min', name: '最小值'}
+                          ]
+                      },
+                      markLine: {
+                          data: [
+                              {type: 'average', name: '平均值'}
+                          ]
+                      }
+                  },
+              ]
+            };
+            myChart.setOption(option);
+            //各个成绩段的人数
+            var myChart = echarts.init(document.getElementById('chart-3'));
+            option = {
+              title : {
+                  text: '各成绩段人数',
+              },
+              tooltip : {
+                  trigger: 'axis'
+              },
+              //legend: {
+                  //data:['蒸发量','降水量']
+              //},
+              toolbox: {
+                  show : true,
+                  feature : {
+                      dataView : {show: true, readOnly: false},
+                      magicType : {show: true, type: ['line', 'bar']},
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+              calculable : true,
+              xAxis : [
+                  {
+                      type : 'category',
+                      data : ['10','20','30','40','50','60','70','80','90','100']
+                  }
+              ],
+              yAxis : [
+                  {
+                      type : 'value'
+                  }
+              ],
+              series : [
+                  {
+                      name:'人数',
+                      type:'bar',
+                      data:ret['num'],
+                      markPoint : {
+                          data : [
+                              {type : 'max', name: '最大值'},
+                              {type : 'min', name: '最小值'}
+                          ]
+                      },
+                      markLine : {
+                          data : [
+                              {type : 'average', name: '平均值'}
+                          ]
+                      }
+                  }                 
+              ]
+            };
+            myChart.setOption(option);
+            //表现良好和表现不好的比例
+            var myChart = echarts.init(document.getElementById('chart-4'));
+            option = {
+              title: {
+                  text: '良好/预警学生比例',
+                  left: 'center'
+              },
+              tooltip : {
+                  trigger: 'item',
+                  formatter: "{a} <br/>{b} : {c} ({d}%)"
+              },
+              toolbox: {
+                  show: true,
+                  feature: {
+                      dataZoom: {
+                          yAxisIndex: 'none'
+                      },
+                      dataView: {readOnly: false},
+                      saveAsImage: {}
+                  }
+              },
+              legend: {
+                  // orient: 'vertical',
+                  // top: 'middle',
+                  bottom: 10,
+                  left: 'center',
+                  data: ['表现良好','需要预警']
+              },
+              series : [
+                  {
+                      type: 'pie',
+                      radius : '65%',
+                      center: ['50%', '50%'],
+                      selectedMode: 'single',
+                      data:[
+                          {value:ret['ratio'][0],name: '表现良好',},
+                          {value:ret['ratio'][1], name: '需要预警'},
+                      ],
+                      itemStyle: {
+                          emphasis: {
+                              shadowBlur: 10,
+                              shadowOffsetX: 0,
+                              shadowColor: 'rgba(0, 0, 0, 0.5)'
+                          }
+                      }
+                  }
+              ]
+            };
+            myChart.setOption(option);
+    </script>
+
+    
+  </body>
+</html>

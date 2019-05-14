@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Dashboard">
+    <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <title>学生成长分析平台</title>
+
+    <!-- Favicons -->
+    <link href="/templates/servermaterial/img/favicon.png" rel="icon">
+    <link href="/templates/servermaterial/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Bootstrap core CSS -->
+    <link href="/templates/servermaterial/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!--external css-->
+    <link href="/templates/servermaterial/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/templates/servermaterial/lib/advanced-datatable/css/DT_bootstrap.css" />
+    <link href="/templates/servermaterial/lib/advanced-datatable/css/jquery.dataTables.css" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link href="/templates/servermaterial/css/style.css" rel="stylesheet">
+    <link href="/templates/servermaterial/css/style-responsive.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- =======================================================
+        Template Name: Dashio
+        Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
+        Author: TemplateMag.com
+        License: https://templatemag.com/license/
+    ======================================================= -->
+
+  </head>
+  <body>
+    <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS
+      *********************************************************************************************************************************************************** -->
+    <!--header start-->
+    {% include 'servermaterial/header.html' %}
+    <!--header end-->
+
+    <!--sidebar start-->
+    {% include 'servermaterial/sidebar.html' %}
+    <!--sidebar end-->
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+      <section class="wrapper site-min-height">
+        <div class="col-lg-12 mt">
+          <div class="row content-panel">
+            <div class="col-lg-12 detailed mt">
+              <h4>生活规律需要重点关注学生名单</h4>
+              <div>
+                   <div class="row">
+
+
+
+                      <div class="col-md-6 col-md-offset-1" id="chart-1" style="width: 450px;height:400px;"></div>
+
+
+                    <div class="col-md-6">
+                     <table class="table table-striped table-bordered table-hover table-checkable order-column" id="table1">
+                          <thead>
+                              <tr>
+                                  <th>学号 </th>
+                                  <th>学院</th>
+                                  <th>专业</th>
+                                  <th>班级</th>
+
+                              </tr>
+                          </thead>
+                          <tbody>
+
+                          </tbody>
+                      </table>
+                        </div>
+
+
+                    </div>
+
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+      <!-- /wrapper -->
+    </section>
+    <!-- /MAIN CONTENT -->
+    <!--main content end-->
+
+    <!--footer start-->
+    {% include 'servermaterial/footer.html' %}
+    <!--footer end-->
+
+    <!-- js placed at the end of the document so the pages load faster -->
+
+    <!--<script type="text/javascript" language="javascript" src="/templates/servermaterial/lib/advanced-datatable/js/jquery.js"></script>-->
+    <!--<script src="/templates/servermaterial/lib/bootstrap/js/bootstrap.min.js"></script>-->
+
+
+    <!--common script for all pages-->
+    <script src="/templates/servermaterial/lib/common-scripts.js"></script>
+    <!--script for this page-->
+
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-fileupload/bootstrap-fileupload.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/date.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-daterangepicker/moment.min.js"></script>
+    <script type="text/javascript" src="/templates/servermaterial/lib/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
+
+    <!--script for this page-->
+    <script src="/templates/servermaterial/lib/morris-conf.js"></script>
+    <script src="/templates/servermaterial/lib/morris/morris.min.js"></script>
+    <script src="/templates/servermaterial/lib/raphael/raphael.min.js"></script>
+    <!--script for charts-->
+
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+    <!--<script src="/templates/servermaterial/lib/echarts.js"></script>-->
+    <!--<script src="/templates/servermaterial/lib/wordcloud.js"></script>-->
+    <script src="/templates/servermaterial/lib/echarts.min.js"></script>
+    <script src="/templates/servermaterial/js/echarts-wordcloud.min.js"></script>
+
+
+    <script>
+var myChart1 = echarts.init(document.getElementById('chart-1'));
+option = {
+    <!--backgroundColor: '#2c343c',-->
+
+    title: {
+        text: '身体健康与否人数比例图',
+        left: 'center',
+        top: 20,
+        textStyle: {
+            color: 'black'
+        }
+    },
+
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+
+
+    series : [
+        {
+            name:'人数',
+            type:'pie',
+            radius : '55%',
+            center: ['50%', '50%'],
+            data:[].sort(function (a, b) { return a.value - b.value; }),
+
+            label: {
+                normal: {
+                    textStyle: {
+                        color: 'black'
+                    }
+                }
+            },
+            labelLine: {
+                normal: {
+                    lineStyle: {
+                        color: 'black'
+                    },
+                    smooth: 0.2,
+                    length: 10,
+                    length2: 20
+                }
+            },
+            itemStyle: {
+                normal: {
+
+                    shadowBlur: 200,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            },
+
+            animationType: 'scale',
+            animationEasing: 'elasticOut',
+            animationDelay: function (idx) {
+                return Math.random() * 200;
+            }
+        }
+    ]
+};;
+var data = {{retu|safe}}
+myChart1.setOption(option)
+myChart1.setOption({
+series:[{data:data.cha1}]
+}
+
+);
+
+
+    </script>
+
+    <script>
+//初始化数据表
+$("#table1").DataTable({
+    // 表下方页脚的类型，具体类别比较到，见[官网](https://datatables.net/examples/basic_init/alt_pagination.html)
+    "pagingType": "simple_numbers",
+    //启动搜索框
+    searching: true,
+    destroy : true,
+    // 保存刷新时原表的状态
+    stateSave: true,
+    // 将显示的语言初始化为中文
+    "language": {
+        "lengthMenu": "选择每页 _MENU_ 展示 ",
+        "zeroRecords": "未找到匹配结果--抱歉",
+        "info": "当前显示第 _PAGE_ 页结果，共 _PAGES_ 页",
+        "infoEmpty": "没有数据",
+        "infoFiltered": "(获取 _MAX_ 项结果)",
+        "paginate": {
+            "first": "首页",
+            "previous": "上一页",
+            "next": "下一页",
+            "last": "末页"
+        }
+    },
+    // 此处重要，该data就是dataTables要展示的数据，这里刚好是后端传递过来的数据。注意加django中引用模板语言，加safe。
+    data: {{ res4 | safe }},
+    columns: [
+			{
+			    data: 'StuID'
+
+            },
+			{data: 'School'},
+            {data: 'Major'},
+            {data: 'classNo'}
+             ]
+    })
+
+
+
+
+
+
+
+    </script>
+
+
+
+  </body>
+</html>
